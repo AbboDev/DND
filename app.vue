@@ -23,7 +23,7 @@ body {
   color: var(--fg);
 }
 
-#__nuxt,
+#app,
 #container {
   height: 100%;
   overflow: hidden;

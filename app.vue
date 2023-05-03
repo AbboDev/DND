@@ -1,8 +1,8 @@
 <template>
   <div id="container">
-    <main>
-      <h1>Hello from the edge!</h1>
-    </main>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
 

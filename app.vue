@@ -17,8 +17,8 @@ body {
   --bg: white;
   --primary: #00dc82;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   background: var(--bg);
   color: var(--fg);
 }
@@ -34,40 +34,22 @@ body {
   color: var(--bg);
 }
 
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 @media (prefers-color-scheme: dark) {
   body {
     --fg: white;
     --bg: black;
-  }
-}
-
-/* main */
-
-main {
-  position: relative;
-  width: 100vw;
-  height: 100%;
-  padding: 2.5rem;
-  box-sizing: border-box;
-}
-
-main h1 {
-  font-size: min(16vw, 4rem);
-  font-weight: 600;
-  margin: 0;
-  text-align: center;
-  position: absolute;
-  top: 10vh;
-  left: 0;
-  width: 100%;
-  padding: 0 2.5rem;
-  box-sizing: border-box;
-  line-height: 1;
-}
-
-@media (min-width: 640px) {
-  main h1 {
-    font-size: min(8vw, 4rem);
   }
 }
 </style>

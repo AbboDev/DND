@@ -1,6 +1,6 @@
 <template>
   <main>
-    <h1>Hello from the edge!</h1>
+    <TextField v-model="name">Character Name</TextField>
 
     <ul>
       <li v-for="(value, statistic) in statistics" :key="statistic">

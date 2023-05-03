@@ -14,7 +14,9 @@
 
         <ol>
           <li v-for="(skillValue, skill) in skills[statistic]" :key="skill">
-            {{ skill }}: {{ skillValue }}
+            <CheckboxField :name="skill" v-model="proficiencies[statistic][skill]">
+              {{ skill.toUpperCase() }}: {{ skillValue }}
+            </CheckboxField>
           </li>
         </ol>
       </li>
@@ -25,7 +27,7 @@
 <script setup lang="ts">
 import { useCharacterStore } from "@/stores/character";
 const store = useCharacterStore();
-const { name, statistics, modifiers, skills } = storeToRefs(store);
+const { name, statistics, proficiencies, modifiers, skills } = storeToRefs(store);
 </script>
 
 <style lang="scss" scoped>

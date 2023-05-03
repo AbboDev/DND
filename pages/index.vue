@@ -2,7 +2,7 @@
   <main>
     <TextField v-model="name">Character Name</TextField>
 
-    <ul>
+    <ol>
       <li v-for="(value, statistic) in statistics" :key="statistic">
         <StatisticField
           :name="statistic"
@@ -11,15 +11,21 @@
         >
           {{ statistic.toUpperCase() }}
         </StatisticField>
+
+        <ol>
+          <li v-for="(skillValue, skill) in skills[statistic]" :key="skill">
+            {{ skill }}: {{ skillValue }}
+          </li>
+        </ol>
       </li>
-    </ul>
+    </ol>
   </main>
 </template>
 
 <script setup lang="ts">
 import { useCharacterStore } from "@/stores/character";
 const store = useCharacterStore();
-const { name, statistics, modifiers } = storeToRefs(store);
+const { name, statistics, modifiers, skills } = storeToRefs(store);
 </script>
 
 <style lang="scss" scoped>
@@ -42,13 +48,33 @@ h1 {
   line-height: 1;
 }
 
-ul {
+ol {
   display: flex;
   flex-wrap: nowrap;
   list-style: none;
   justify-content: space-between;
   margin: 0;
   padding: 0;
+
+  & > li {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+
+    & > ol {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      list-style: none;
+      justify-content: space-between;
+      margin: 0;
+      padding: 0;
+
+      & > li {
+        width: 100%;
+      }
+    }
+  }
 }
 
 @media (min-width: 640px) {

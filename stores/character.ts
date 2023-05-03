@@ -10,45 +10,6 @@ export const useCharacterStore = defineStore("character", () => {
     charisma: 10,
   });
 
-  const skills = ref({
-    strength: {
-      savingThrows: 0,
-      athletics: 0,
-    },
-    dexterity: {
-      savingThrows: 0,
-      acrobatics: 0,
-      sleightOfHand: 0,
-      stealth: 0,
-    },
-    constitution: {
-      savingThrows: 0,
-    },
-    intelligence: {
-      savingThrows: 0,
-      investigation: 0,
-      nature: 0,
-      religion: 0,
-      arcana: 0,
-      history: 0,
-    },
-    wisdom: {
-      savingThrows: 0,
-      animalHandling: 0,
-      medicine: 0,
-      insight: 0,
-      survival: 0,
-      perception: 0,
-    },
-    charisma: {
-      savingThrows: 0,
-      deception: 0,
-      intimidation: 0,
-      performance: 0,
-      persuasion: 0,
-    },
-  });
-
   function calculateModifier(statistic: number): number {
     return Math.floor((statistic - 10) / 2);
   }
@@ -60,6 +21,45 @@ export const useCharacterStore = defineStore("character", () => {
     intelligence: calculateModifier(statistics.value.intelligence),
     wisdom: calculateModifier(statistics.value.wisdom),
     charisma: calculateModifier(statistics.value.charisma),
+  }));
+
+  const skills = computed(() => ({
+    strength: {
+      savingThrows: modifiers.value.strength,
+      athletics: modifiers.value.strength,
+    },
+    dexterity: {
+      savingThrows: modifiers.value.dexterity,
+      acrobatics: modifiers.value.dexterity,
+      sleightOfHand: modifiers.value.dexterity,
+      stealth: modifiers.value.dexterity,
+    },
+    constitution: {
+      savingThrows: modifiers.value.constitution,
+    },
+    intelligence: {
+      savingThrows: modifiers.value.intelligence,
+      investigation: modifiers.value.intelligence,
+      nature: modifiers.value.intelligence,
+      religion: modifiers.value.intelligence,
+      arcana: modifiers.value.intelligence,
+      history: modifiers.value.intelligence,
+    },
+    wisdom: {
+      savingThrows: modifiers.value.wisdom,
+      animalHandling: modifiers.value.wisdom,
+      medicine: modifiers.value.wisdom,
+      insight: modifiers.value.wisdom,
+      survival: modifiers.value.wisdom,
+      perception: modifiers.value.wisdom,
+    },
+    charisma: {
+      savingThrows: modifiers.value.charisma,
+      deception: modifiers.value.charisma,
+      intimidation: modifiers.value.charisma,
+      performance: modifiers.value.charisma,
+      persuasion: modifiers.value.charisma,
+    },
   }));
 
   return { name, statistics, skills, modifiers, calculateModifier };

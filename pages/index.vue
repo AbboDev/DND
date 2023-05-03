@@ -4,13 +4,13 @@
 
     <ul>
       <li v-for="(value, statistic) in statistics" :key="statistic">
-        <Statistic
+        <StatisticField
           :name="statistic"
           v-model:value="statistics[statistic]"
           :calculated="modifiers[statistic]"
         >
           {{ statistic.toUpperCase() }}
-        </Statistic>
+        </StatisticField>
       </li>
     </ul>
   </main>

@@ -2,8 +2,8 @@ export const useCharacterStore = defineStore("character", () => {
   const name = ref("");
 
   const statistics = ref({
-    strength: 12,
-    dexterity: 9,
+    strength: 10,
+    dexterity: 10,
     constitution: 10,
     intelligence: 10,
     wisdom: 10,

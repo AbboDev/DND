@@ -3,5 +3,8 @@
     "activityBar.background": "#18331C",
     "titleBar.activeBackground": "#214827",
     "titleBar.activeForeground": "#F6FBF7"
-  }
+  },
+  "npm.packageManager": "pnpm",
+  "eslint.packageManager": "pnpm",
+  "stylelint.packageManager": "pnpm"
 }

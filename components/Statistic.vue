@@ -8,7 +8,7 @@
         :name="props.name"
         class="o-statistic__input"
         :value="value"
-        @input="$emit('update:value', $event.target.value)"
+        @input="$emit('update:value', parseInt($event.target.value))"
       />
       <span class="o-statistic__calculated">{{ calculated }}</span>
     </label>
@@ -22,16 +22,19 @@ const props = defineProps({
     required: true,
   },
   value: {
+    type: [Number, String],
+    required: true,
+    validate(value) {
+      return !isNaN(value);
+    },
+  },
+  calculated: {
     type: Number,
     required: true,
   },
 });
 
-defineEmits(["update:modelValue"]);
-
-const calculated = computed(() => {
-  return Math.floor((props.value - 10) / 2);
-});
+defineEmits(["update:value"]);
 </script>
 
 <style lang="scss">

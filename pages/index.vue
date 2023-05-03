@@ -4,7 +4,11 @@
 
     <ul>
       <li v-for="(value, statistic) in statistics" :key="statistic">
-        <Statistic v-model:value="statistics[statistic]" :name="statistic">
+        <Statistic
+          :name="statistic"
+          v-model:value="statistics[statistic]"
+          :calculated="modifiers[statistic]"
+        >
           {{ statistic.toUpperCase() }}
         </Statistic>
       </li>
@@ -15,7 +19,7 @@
 <script setup lang="ts">
 import { useCharacterStore } from "@/stores/character";
 const store = useCharacterStore();
-const { name, statistics } = storeToRefs(store);
+const { name, statistics, modifiers } = storeToRefs(store);
 </script>
 
 <style lang="scss" scoped>

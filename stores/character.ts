@@ -49,14 +49,18 @@ export const useCharacterStore = defineStore("character", () => {
     },
   });
 
+  function calculateModifier(statistic: number): number {
+    return Math.floor((statistic - 10) / 2);
+  }
+
   const modifiers = computed(() => ({
-    strength: (statistics.value.strength - 10) / 2,
-    dexterity: (statistics.value.dexterity - 10) / 2,
-    constitution: (statistics.value.constitution - 10) / 2,
-    intelligence: (statistics.value.intelligence - 10) / 2,
-    wisdom: (statistics.value.wisdom - 10) / 2,
-    charisma: (statistics.value.charisma - 10) / 2,
+    strength: calculateModifier(statistics.value.strength),
+    dexterity: calculateModifier(statistics.value.dexterity),
+    constitution: calculateModifier(statistics.value.constitution),
+    intelligence: calculateModifier(statistics.value.intelligence),
+    wisdom: calculateModifier(statistics.value.wisdom),
+    charisma: calculateModifier(statistics.value.charisma),
   }));
 
-  return { name, statistics, skills, modifiers };
+  return { name, statistics, skills, modifiers, calculateModifier };
 });

@@ -1,18 +1,24 @@
+import { useLocalStorage, StorageSerializers } from "@vueuse/core";
+
 export const useCharacterStore = defineStore("character", () => {
-  const name = ref("");
+  const name = useLocalStorage('characterName', "");
 
-  const statistics = ref({
-    strength: 10,
-    dexterity: 10,
-    constitution: 10,
-    intelligence: 10,
-    wisdom: 10,
-    charisma: 10,
-  });
+  const statistics = useLocalStorage(
+    "statistics",
+    {
+      strength: 10,
+      dexterity: 10,
+      constitution: 10,
+      intelligence: 10,
+      wisdom: 10,
+      charisma: 10,
+    },
+    { serializer: StorageSerializers.object }
+  );
 
-  const proficiency = ref(2);
+  const proficiency = useLocalStorage('proficiencyBonus', 2);
 
-  const proficiencies = ref({
+  const proficiencies = useLocalStorage('proficiencies', {
     strength: {
       savingThrows: false,
       athletics: false,
@@ -180,10 +186,10 @@ export const useCharacterStore = defineStore("character", () => {
   }));
 
   return {
-    name,
-    statistics,
-    proficiency,
-    proficiencies,
+    name: skipHydrate(name),
+    statistics: skipHydrate(statistics),
+    proficiency: skipHydrate(proficiency),
+    proficiencies: skipHydrate(proficiencies),
     skills,
     modifiers,
     calculateModifier,

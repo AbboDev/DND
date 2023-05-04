@@ -2,30 +2,33 @@
   <main>
     <TextField v-model="name">Character Name</TextField>
 
-    <ol>
-      <li v-for="(value, statistic) in statistics" :key="statistic">
-        <StatisticField
-          :name="statistic"
+    <ClientOnly>
+      <ol>
+        <li v-for="(value, statistic) in statistics" :key="statistic">
+          <StatisticField
+            :name="statistic"
             v-model="statistics[statistic]"
-          :calculated="modifiers[statistic]"
-        >
-          {{ statistic.toUpperCase() }}
-        </StatisticField>
+            :calculated="modifiers[statistic]"
+          >
+            {{ statistic.toUpperCase() }}
+          </StatisticField>
 
-        <ol>
-          <li v-for="(skillValue, skill) in skills[statistic]" :key="skill">
-            <CheckboxField :name="skill" v-model="proficiencies[statistic][skill]">
-              {{ skill.toUpperCase() }}: {{ skillValue }}
-            </CheckboxField>
-          </li>
-        </ol>
-      </li>
-    </ol>
+          <ol>
+            <li v-for="(skillValue, skill) in skills[statistic]" :key="skill">
+              <CheckboxField :name="skill" v-model="proficiencies[statistic][skill]">
+                {{ skill.toUpperCase() }}: {{ skillValue }}
+              </CheckboxField>
+            </li>
+          </ol>
+        </li>
+      </ol>
+    </ClientOnly>
   </main>
 </template>
 
 <script setup lang="ts">
 import { useCharacterStore } from "@/stores/character";
+
 const store = useCharacterStore();
 const { name, statistics, proficiencies, modifiers, skills } = storeToRefs(store);
 </script>

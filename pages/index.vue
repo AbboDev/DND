@@ -6,7 +6,7 @@
       <li v-for="(value, statistic) in statistics" :key="statistic">
         <StatisticField
           :name="statistic"
-          v-model:value="statistics[statistic]"
+            v-model="statistics[statistic]"
           :calculated="modifiers[statistic]"
         >
           {{ statistic.toUpperCase() }}

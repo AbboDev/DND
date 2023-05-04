@@ -7,8 +7,8 @@
         type="number"
         :name="props.name"
         class="o-statistic__input"
-        :value="value"
-        @input="$emit('update:value', parseInt($event.target.value))"
+        :value="modelValue"
+        @input="$emit('update:modelValue', $event.target.value)"
       />
       <span class="o-statistic__calculated">{{ calculated }}</span>
     </label>
@@ -21,7 +21,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  value: {
+  modelValue: {
     type: [Number, String],
     required: true,
     validate(value) {
@@ -34,7 +34,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(["update:value"]);
+defineEmits(["update:modelValue"]);
 </script>
 
 <style lang="scss">

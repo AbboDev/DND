@@ -97,7 +97,7 @@ export const useCharacterStore = defineStore(
     const toggleProficiency = (
       statistic: keyof Statistics,
       skill: string,
-      add = true
+      add = 0
     ): void => {
       if (!proficiencies.value.hasOwnProperty(statistic)) {
         proficiencies.value[statistic] = {};
@@ -105,7 +105,7 @@ export const useCharacterStore = defineStore(
 
       if (add) {
         // @ts-ignore
-        proficiencies.value[statistic][skill] = 1;
+        proficiencies.value[statistic][skill] = add;
         return;
       }
 

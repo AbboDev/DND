@@ -10,16 +10,18 @@
       <span></span>
     </span>
 
-    <span class="o-checkbox-field__label"><slot /></span>
+    <span v-if="slots.default" class="o-checkbox-field__label"><slot /></span>
 
-    <span class="o-checkbox-field__calculated"><slot name="calculated" /></span>
+    <span v-if="slots.calculated" class="o-checkbox-field__calculated"
+      ><slot name="calculated"
+    /></span>
   </label>
 </template>
 
 <script setup>
 const props = defineProps({
   value: {
-    type: Number,
+    type: [Number, Boolean],
     default: 0,
   },
   name: {
@@ -29,6 +31,8 @@ const props = defineProps({
 });
 
 defineEmits(["change"]);
+
+const slots = useSlots();
 </script>
 
 <style lang="scss">

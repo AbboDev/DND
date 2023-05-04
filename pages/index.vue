@@ -13,6 +13,16 @@
 
           <ol>
             <li v-for="(skillValue, skill) in proficiencies[statistic]" :key="skill">
+              <Transition>
+                <CheckboxField
+                  v-if="proficiencies[statistic]?.[skill]"
+                  class="is-absolute"
+                  :name="skill"
+                  :value="(proficiencies[statistic]?.[skill] || 0) > 1"
+                  @change="(event: boolean) => addDoubleProficiency(event, statistic, skill)"
+                />
+              </Transition>
+
               <CheckboxField
                 :name="skill"
                 :value="proficiencies[statistic]?.[skill]"
@@ -46,7 +56,11 @@ const {
 const { toggleProficiency } = store;
 
 function addProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
-  toggleProficiency(statistic, skill, add);
+  toggleProficiency(statistic, skill, add ? 1 : 0);
+}
+
+function addDoubleProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
+  toggleProficiency(statistic, skill, add ? 2 : 1);
 }
 </script>
 
@@ -94,6 +108,14 @@ ol {
 
       & > li {
         width: 100%;
+        position: relative;
+
+        .is-absolute {
+          position: absolute;
+          inset: 50% auto auto 0;
+          transform: scale(0.8) translate(-50%, -100%);
+          z-index: 1;
+        }
       }
     }
   }

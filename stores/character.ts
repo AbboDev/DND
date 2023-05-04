@@ -8,6 +8,7 @@ import { Statistics, Skills } from "~/types/character";
 
 export interface CharacterStore {
   name: RemovableRef<string>;
+  level: RemovableRef<number>;
   statistics: RemovableRef<Statistics>;
   proficiency: RemovableRef<number>;
   proficiencies: RemovableRef<Skills>;
@@ -34,6 +35,7 @@ export const useCharacterStore = defineStore(
   "character",
   () => {
     const name = useLocalStorage<string>("characterName", "");
+    const level = useLocalStorage<number>("level", 1);
 
     const statistics = useLocalStorage<Statistics>(
       "statistics",
@@ -136,6 +138,7 @@ export const useCharacterStore = defineStore(
 
     return {
       name: skipHydrate(name),
+      level: skipHydrate(level),
       statistics: skipHydrate(statistics),
       proficiency: skipHydrate(proficiency),
       proficiencies: skipHydrate(proficiencies),

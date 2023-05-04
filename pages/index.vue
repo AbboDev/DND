@@ -5,6 +5,10 @@
     <ClientOnly>
       <ol>
         <li>
+          <StatisticField name="level" v-model="level" :min="1"> Level </StatisticField>
+        </li>
+
+        <li>
           <StatisticField name="proficiency" v-model="proficiency">
             Proficiency
           </StatisticField>
@@ -77,6 +81,7 @@ import { Statistics } from "~/types/character";
 const store = useCharacterStore();
 const {
   name,
+  level,
   statistics,
   proficiency,
   proficiencies,

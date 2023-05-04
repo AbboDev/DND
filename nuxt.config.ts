@@ -5,6 +5,11 @@ export default defineNuxtConfig({
   },
   modules: ["@pinia/nuxt"],
   pinia: {
-    autoImports: ["defineStore", "storeToRefs"],
+    autoImports: [
+      "defineStore",
+      "storeToRefs",
+      "skipHydrate",
+      "acceptHMRUpdate",
+    ],
   },
 });

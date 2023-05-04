@@ -189,3 +189,7 @@ export const useCharacterStore = defineStore("character", () => {
     calculateModifier,
   };
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useCharacterStore, import.meta.hot));
+}

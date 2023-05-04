@@ -2,11 +2,33 @@
   <main>
     <TextField v-model="name">Character Name</TextField>
 
-    <StatisticField name="proficiency" v-model="proficiency">
-      Proficiency
-    </StatisticField>
-
     <ClientOnly>
+      <ol>
+        <li>
+          <StatisticField name="proficiency" v-model="proficiency">
+            Proficiency
+          </StatisticField>
+        </li>
+
+        <li>
+          <StatisticField name="passivePerception" v-model="passivePerception">
+            Passive Perception
+          </StatisticField>
+        </li>
+
+        <li>
+          <StatisticField name="passiveInsight" v-model="passiveInsight">
+            Passive Insight
+          </StatisticField>
+        </li>
+
+        <li>
+          <StatisticField name="initiative" v-model="initiative">
+            Initiative
+          </StatisticField>
+        </li>
+      </ol>
+
       <ol>
         <li v-for="(statisticValue, statistic) in statistics" :key="statistic">
           <StatisticField :name="statistic" v-model="statistics[statistic]">
@@ -56,6 +78,9 @@ const {
   proficiencies,
   calculatedSkill,
   calculatedModifier,
+  initiative,
+  passivePerception,
+  passiveInsight,
 } = storeToRefs(store);
 
 const { toggleProficiency } = store;

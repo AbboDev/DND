@@ -18,6 +18,9 @@ export interface CharacterStore {
   calculatedModifier: globalThis.ComputedRef<
     (statistic: keyof Statistics, skill: keyof Statistics) => number
   >;
+  initiative: globalThis.ComputedRef<number>;
+  passivePerception: globalThis.ComputedRef<number>;
+  passiveInsight: globalThis.ComputedRef<number>;
 
   toggleProficiency(
     statistic: keyof Statistics,
@@ -100,6 +103,18 @@ export const useCharacterStore = defineStore(
       }
     );
 
+    const initiative = computed<number>(() =>
+      calculatedModifier.value("dexterity")
+    );
+
+    const passivePerception = computed<number>(() =>
+      calculatedSkill.value("wisdom", "perception")
+    );
+
+    const passiveInsight = computed<number>(() =>
+      calculatedSkill.value("wisdom", "insight")
+    );
+
     const toggleProficiency = (
       statistic: keyof Statistics,
       skill: string,
@@ -126,6 +141,9 @@ export const useCharacterStore = defineStore(
       proficiencies: skipHydrate(proficiencies),
       calculatedSkill,
       calculatedModifier,
+      initiative,
+      passivePerception,
+      passiveInsight,
       toggleProficiency,
     };
   }

@@ -16,7 +16,9 @@
           <ol>
             <li v-for="(skillValue, skill) in skills[statistic]" :key="skill">
               <CheckboxField :name="skill" v-model="proficiencies[statistic][skill]">
-                {{ skill.toUpperCase() }}: {{ skillValue }}
+                {{ skill.toUpperCase() }}
+
+                <template #calculated>{{ skillValue }}</template>
               </CheckboxField>
             </li>
           </ol>

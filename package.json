@@ -10,6 +10,13 @@
   },
   "devDependencies": {
     "@types/node": "^18",
-    "nuxt": "^3.4.2"
+    "@vueuse/core": "^10.1.2",
+    "@vueuse/nuxt": "^10.1.2",
+    "nuxt": "^3.4.2",
+    "sass": "^1.62.1"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "^0.4.9",
+    "pinia": "^2.0.35"
   }
 }

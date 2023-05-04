@@ -4,11 +4,15 @@
       <span v-if="slots.default" class="o-statistic__title"><slot /></span>
 
       <input
-        :min="0"
+        :min="min"
+        :max="max"
         type="number"
         :name="props.name"
         class="o-statistic__input"
         :value="modelValue"
+        :disable="disable"
+        :readonly="readonly"
+        autocomplete="off"
         @input="$emit('update:modelValue', $event.target.value)"
       />
 
@@ -24,6 +28,22 @@ const props = defineProps({
   name: {
     type: String,
     required: true,
+  },
+  min: {
+    type: Number,
+    default: 0,
+  },
+  max: {
+    type: Number,
+    default: null,
+  },
+  disable: {
+    type: Boolean,
+    default: false,
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
   },
   modelValue: {
     type: [Number, String],

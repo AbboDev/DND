@@ -18,6 +18,12 @@ export interface CharacterStore {
   calculatedModifier: globalThis.ComputedRef<
     (statistic: keyof Statistics, skill: keyof Statistics) => number
   >;
+
+  toggleProficiency(
+    statistic: keyof Statistics,
+    skill: string,
+    add: number
+  ): void;
 }
 
 export const useCharacterStore = defineStore(

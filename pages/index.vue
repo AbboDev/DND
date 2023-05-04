@@ -11,19 +11,23 @@
         </li>
 
         <li>
-          <StatisticField name="passivePerception" v-model="passivePerception">
+          <StatisticField
+            name="passivePerception"
+            v-model="passivePerception"
+            :readonly="true"
+          >
             Passive Perception
           </StatisticField>
         </li>
 
         <li>
-          <StatisticField name="passiveInsight" v-model="passiveInsight">
+          <StatisticField name="passiveInsight" v-model="passiveInsight" :readonly="true">
             Passive Insight
           </StatisticField>
         </li>
 
         <li>
-          <StatisticField name="initiative" v-model="initiative">
+          <StatisticField name="initiative" v-model="initiative" :readonly="true">
             Initiative
           </StatisticField>
         </li>

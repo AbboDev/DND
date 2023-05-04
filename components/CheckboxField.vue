@@ -4,8 +4,8 @@
       <input
         type="checkbox"
         :name="props.name"
-        :checked="props.modelValue"
-        @input="$emit('update:modelValue', $event.target.checked)"
+        :checked="props.value"
+        @input="$emit('change', $event.target.checked)"
       />
       <span></span>
     </span>
@@ -18,9 +18,9 @@
 
 <script setup>
 const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false,
+  value: {
+    type: Number,
+    default: 0,
   },
   name: {
     type: String,
@@ -28,7 +28,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(["update:modelValue"]);
+defineEmits(["change"]);
 </script>
 
 <style lang="scss">

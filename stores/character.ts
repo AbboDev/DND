@@ -1,200 +1,129 @@
-import { useLocalStorage, StorageSerializers } from "@vueuse/core";
+import {
+  useLocalStorage,
+  StorageSerializers,
+  RemovableRef,
+} from "@vueuse/core";
 
-export const useCharacterStore = defineStore("character", () => {
-  const name = useLocalStorage('characterName', "");
+import { Statistics, Skills } from "~/types/character";
 
-  const statistics = useLocalStorage(
-    "statistics",
-    {
-      strength: 10,
-      dexterity: 10,
-      constitution: 10,
-      intelligence: 10,
-      wisdom: 10,
-      charisma: 10,
-    },
-    { serializer: StorageSerializers.object }
-  );
+export interface CharacterStore {
+  name: RemovableRef<string>;
+  statistics: RemovableRef<Statistics>;
+  proficiency: RemovableRef<number>;
+  proficiencies: RemovableRef<Skills>;
 
-  const proficiency = useLocalStorage('proficiencyBonus', 2);
+  calculatedSkill: globalThis.ComputedRef<
+    (statistic: keyof Statistics) => number
+  >;
+  calculatedModifier: globalThis.ComputedRef<
+    (statistic: keyof Statistics, skill: keyof Statistics) => number
+  >;
+}
 
-  const proficiencies = useLocalStorage('proficiencies', {
-    strength: {
-      savingThrows: false,
-      athletics: false,
-    },
-    dexterity: {
-      savingThrows: false,
-      acrobatics: false,
-      sleightOfHand: false,
-      stealth: false,
-    },
-    constitution: {
-      savingThrows: false,
-    },
-    intelligence: {
-      savingThrows: false,
-      investigation: false,
-      nature: false,
-      religion: false,
-      arcana: false,
-      history: false,
-    },
-    wisdom: {
-      savingThrows: false,
-      animalHandling: false,
-      medicine: false,
-      insight: false,
-      survival: false,
-      perception: false,
-    },
-    charisma: {
-      savingThrows: false,
-      deception: false,
-      intimidation: false,
-      performance: false,
-      persuasion: false,
-    },
-  });
+export const useCharacterStore = defineStore(
+  // export const useCharacterStore = defineStore<"character", CharacterStore>(
+  "character",
+  () => {
+    const name = useLocalStorage<string>("characterName", "");
 
-  function calculateModifier(statistic: number): number {
-    return Math.floor((statistic - 10) / 2);
+    const statistics = useLocalStorage<Statistics>(
+      "statistics",
+      {
+        strength: 10,
+        dexterity: 10,
+        constitution: 10,
+        intelligence: 10,
+        wisdom: 10,
+        charisma: 10,
+      },
+      { serializer: StorageSerializers.object }
+    );
+
+    const proficiency = useLocalStorage<number>("proficiencyBonus", 2);
+
+    const proficiencies = useLocalStorage<Skills>("proficiencies", {
+      strength: {
+        savingThrows: 0,
+        athletics: 0,
+      },
+      dexterity: {
+        savingThrows: 0,
+        acrobatics: 0,
+        sleightOfHand: 0,
+        stealth: 0,
+      },
+      constitution: {
+        savingThrows: 0,
+      },
+      intelligence: {
+        savingThrows: 0,
+        investigation: 0,
+        nature: 0,
+        religion: 0,
+        arcana: 0,
+        history: 0,
+      },
+      wisdom: {
+        savingThrows: 0,
+        animalHandling: 0,
+        medicine: 0,
+        insight: 0,
+        survival: 0,
+        perception: 0,
+      },
+      charisma: {
+        savingThrows: 0,
+        deception: 0,
+        intimidation: 0,
+        performance: 0,
+        persuasion: 0,
+      },
+    });
+
+    const calculatedModifier = computed(
+      () => (statistic: keyof Statistics) =>
+        Math.floor(((statistics.value[statistic] || 0) - 10) / 2)
+    );
+
+    const calculatedSkill = computed(
+      () => (statistic: keyof Statistics, skill: string) => {
+        return (
+          calculatedModifier.value(statistic) +
+          proficiency.value * (proficiencies.value?.[statistic]?.[skill] || 0)
+        );
+      }
+    );
+
+    const toggleProficiency = (
+      statistic: keyof Statistics,
+      skill: string,
+      add = true
+    ): void => {
+      if (!proficiencies.value.hasOwnProperty(statistic)) {
+        proficiencies.value[statistic] = {};
+      }
+
+      if (add) {
+        // @ts-ignore
+        proficiencies.value[statistic][skill] = 1;
+        return;
+      }
+
+      // @ts-ignore
+      proficiencies.value[statistic][skill] = 0;
+    };
+
+    return {
+      name: skipHydrate(name),
+      statistics: skipHydrate(statistics),
+      proficiency: skipHydrate(proficiency),
+      proficiencies: skipHydrate(proficiencies),
+      calculatedSkill,
+      calculatedModifier,
+      toggleProficiency,
+    };
   }
-
-  const modifiers = computed(() => ({
-    strength: calculateModifier(statistics.value.strength),
-    dexterity: calculateModifier(statistics.value.dexterity),
-    constitution: calculateModifier(statistics.value.constitution),
-    intelligence: calculateModifier(statistics.value.intelligence),
-    wisdom: calculateModifier(statistics.value.wisdom),
-    charisma: calculateModifier(statistics.value.charisma),
-  }));
-
-  function calculateSkill(statistic: number, hasProficiency = false): number {
-    return statistic + (hasProficiency ? proficiency.value : 0);
-  }
-
-  const skills = computed(() => ({
-    strength: {
-      savingThrows: calculateSkill(
-        modifiers.value.strength,
-        proficiencies.value.strength.savingThrows
-      ),
-      athletics: calculateSkill(
-        modifiers.value.strength,
-        proficiencies.value.strength.athletics
-      ),
-    },
-    dexterity: {
-      savingThrows: calculateSkill(
-        modifiers.value.dexterity,
-        proficiencies.value.dexterity.savingThrows
-      ),
-      acrobatics: calculateSkill(
-        modifiers.value.dexterity,
-        proficiencies.value.dexterity.acrobatics
-      ),
-      sleightOfHand: calculateSkill(
-        modifiers.value.dexterity,
-        proficiencies.value.dexterity.sleightOfHand
-      ),
-      stealth: calculateSkill(
-        modifiers.value.dexterity,
-        proficiencies.value.dexterity.stealth
-      ),
-    },
-    constitution: {
-      savingThrows: calculateSkill(
-        modifiers.value.constitution,
-        proficiencies.value.constitution.savingThrows
-      ),
-    },
-    intelligence: {
-      savingThrows: calculateSkill(
-        modifiers.value.intelligence,
-        proficiencies.value.intelligence.savingThrows
-      ),
-      investigation: calculateSkill(
-        modifiers.value.intelligence,
-        proficiencies.value.intelligence.investigation
-      ),
-      nature: calculateSkill(
-        modifiers.value.intelligence,
-        proficiencies.value.intelligence.nature
-      ),
-      religion: calculateSkill(
-        modifiers.value.intelligence,
-        proficiencies.value.intelligence.religion
-      ),
-      arcana: calculateSkill(
-        modifiers.value.intelligence,
-        proficiencies.value.intelligence.arcana
-      ),
-      history: calculateSkill(
-        modifiers.value.intelligence,
-        proficiencies.value.intelligence.history
-      ),
-    },
-    wisdom: {
-      savingThrows: calculateSkill(
-        modifiers.value.wisdom,
-        proficiencies.value.wisdom.savingThrows
-      ),
-      animalHandling: calculateSkill(
-        modifiers.value.wisdom,
-        proficiencies.value.wisdom.animalHandling
-      ),
-      medicine: calculateSkill(
-        modifiers.value.wisdom,
-        proficiencies.value.wisdom.medicine
-      ),
-      insight: calculateSkill(
-        modifiers.value.wisdom,
-        proficiencies.value.wisdom.insight
-      ),
-      survival: calculateSkill(
-        modifiers.value.wisdom,
-        proficiencies.value.wisdom.survival
-      ),
-      perception: calculateSkill(
-        modifiers.value.wisdom,
-        proficiencies.value.wisdom.perception
-      ),
-    },
-    charisma: {
-      savingThrows: calculateSkill(
-        modifiers.value.charisma,
-        proficiencies.value.charisma.savingThrows
-      ),
-      deception: calculateSkill(
-        modifiers.value.charisma,
-        proficiencies.value.charisma.deception
-      ),
-      intimidation: calculateSkill(
-        modifiers.value.charisma,
-        proficiencies.value.charisma.intimidation
-      ),
-      performance: calculateSkill(
-        modifiers.value.charisma,
-        proficiencies.value.charisma.performance
-      ),
-      persuasion: calculateSkill(
-        modifiers.value.charisma,
-        proficiencies.value.charisma.persuasion
-      ),
-    },
-  }));
-
-  return {
-    name: skipHydrate(name),
-    statistics: skipHydrate(statistics),
-    proficiency: skipHydrate(proficiency),
-    proficiencies: skipHydrate(proficiencies),
-    skills,
-    modifiers,
-    calculateModifier,
-  };
-});
+);
 
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useCharacterStore, import.meta.hot));

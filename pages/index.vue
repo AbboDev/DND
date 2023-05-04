@@ -4,21 +4,23 @@
 
     <ClientOnly>
       <ol>
-        <li v-for="(value, statistic) in statistics" :key="statistic">
-          <StatisticField
-            :name="statistic"
-            v-model="statistics[statistic]"
-            :calculated="modifiers[statistic]"
-          >
+        <li v-for="(statisticValue, statistic) in statistics" :key="statistic">
+          <StatisticField :name="statistic" v-model="statistics[statistic]">
             {{ statistic.toUpperCase() }}
+
+            <template #calculated>{{ calculatedModifier(statistic) }}</template>
           </StatisticField>
 
           <ol>
-            <li v-for="(skillValue, skill) in skills[statistic]" :key="skill">
-              <CheckboxField :name="skill" v-model="proficiencies[statistic][skill]">
+            <li v-for="(skillValue, skill) in proficiencies[statistic]" :key="skill">
+              <CheckboxField
+                :name="skill"
+                :value="proficiencies[statistic]?.[skill]"
+                @change="(event: boolean) => addProficiency(event, statistic, skill)"
+              >
                 {{ skill.toUpperCase() }}
 
-                <template #calculated>{{ skillValue }}</template>
+                <template #calculated>{{ calculatedSkill(statistic, skill) }}</template>
               </CheckboxField>
             </li>
           </ol>
@@ -30,9 +32,22 @@
 
 <script setup lang="ts">
 import { useCharacterStore } from "@/stores/character";
+import { Statistics } from "~/types/character";
 
 const store = useCharacterStore();
-const { name, statistics, proficiencies, modifiers, skills } = storeToRefs(store);
+const {
+  name,
+  statistics,
+  proficiencies,
+  calculatedSkill,
+  calculatedModifier,
+} = storeToRefs(store);
+
+const { toggleProficiency } = store;
+
+function addProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
+  toggleProficiency(statistic, skill, add);
+}
 </script>
 
 <style lang="scss" scoped>

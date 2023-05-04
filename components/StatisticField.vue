@@ -2,6 +2,7 @@
   <div class="o-statistic">
     <label class="o-statistic__main">
       <span class="o-statistic__title"><slot /></span>
+
       <input
         :min="0"
         type="number"
@@ -10,7 +11,8 @@
         :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
       />
-      <span class="o-statistic__calculated">{{ calculated }}</span>
+
+      <span class="o-statistic__calculated"><slot name="calculated" /></span>
     </label>
   </div>
 </template>
@@ -24,13 +26,9 @@ const props = defineProps({
   modelValue: {
     type: [Number, String],
     required: true,
-    validate(value) {
+    validate(value: any) {
       return !isNaN(value);
     },
-  },
-  calculated: {
-    type: Number,
-    required: true,
   },
 });
 

@@ -1,7 +1,7 @@
 <template>
-  <div class="o-statistic">
+  <div class="o-statistic" :class="{ 'has-calculated': slots.calculated }">
     <label class="o-statistic__main">
-      <span class="o-statistic__title"><slot /></span>
+      <span v-if="slots.default" class="o-statistic__title"><slot /></span>
 
       <input
         :min="0"
@@ -12,7 +12,9 @@
         @input="$emit('update:modelValue', $event.target.value)"
       />
 
-      <span class="o-statistic__calculated"><slot name="calculated" /></span>
+      <span v-if="slots.calculated" class="o-statistic__calculated"
+        ><slot name="calculated"
+      /></span>
     </label>
   </div>
 </template>
@@ -33,6 +35,8 @@ const props = defineProps({
 });
 
 defineEmits(["update:modelValue"]);
+
+const slots = useSlots();
 </script>
 
 <style lang="scss">
@@ -57,11 +61,15 @@ defineEmits(["update:modelValue"]);
     text-align: center;
     border: 1px solid var(--fg);
     border-radius: 4px;
-    padding: 0.5rem 0.5rem 1.5rem;
+    padding: 0.5rem;
     font-size: 2rem;
     background-color: var(--bg);
     color: var(--fg);
     width: 200px;
+
+    @at-root .has-calculated#{&} {
+      padding-bottom: 1.5rem;
+    }
   }
 
   #{&}__calculated {

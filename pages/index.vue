@@ -2,6 +2,10 @@
   <main>
     <TextField v-model="name">Character Name</TextField>
 
+    <StatisticField name="proficiency" v-model="proficiency">
+      Proficiency
+    </StatisticField>
+
     <ClientOnly>
       <ol>
         <li v-for="(statisticValue, statistic) in statistics" :key="statistic">
@@ -48,6 +52,7 @@ const store = useCharacterStore();
 const {
   name,
   statistics,
+  proficiency,
   proficiencies,
   calculatedSkill,
   calculatedModifier,

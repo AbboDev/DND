@@ -115,6 +115,23 @@
           </ol>
         </li>
       </ol>
+
+      <ol>
+        <li>
+          <StatisticField
+            name="spellAttackBonus"
+            v-model="spellAttackBonus"
+            :readonly="true"
+          >
+            Spell Attack Bonus
+          </StatisticField>
+        </li>
+        <li>
+          <StatisticField name="spellSaveDC" v-model="spellSaveDC" :readonly="true">
+            Spell Save DC
+          </StatisticField>
+        </li>
+      </ol>
     </ClientOnly>
   </main>
 </template>
@@ -142,6 +159,8 @@ const {
   hitPoints,
   temporaryHitPoints,
   maxHitPoints,
+  spellAttackBonus,
+  spellSaveDC,
 } = storeToRefs(store);
 
 const { toggleProficiency } = store;

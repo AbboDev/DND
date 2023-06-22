@@ -19,6 +19,10 @@ export interface CharacterStore {
   proficiency: RemovableRef<number>;
   proficiencies: RemovableRef<Skills>;
 
+  spellcastingAbility: RemovableRef<keyof Statistics>;
+  spellAttackBonus: globalThis.ComputedRef<number>;
+  spellSaveDC: globalThis.ComputedRef<number>;
+
   calculatedSkill: globalThis.ComputedRef<
     (statistic: keyof Statistics) => number
   >;
@@ -49,9 +53,14 @@ export const useCharacterStore = defineStore(
     const armorClass = useLocalStorage<number>("armorClass", 10);
     const speed = useLocalStorage<number>("speed", 9);
 
-    const hitPoints = useLocalStorage<number>("hitPoints", 0);
     const temporaryHitPoints = useLocalStorage<number>("temporaryHitPoints", 0);
-    const maxHitPoints = useLocalStorage<number>("maxHitPoints", 0);
+    const maxHitPoints = useLocalStorage<number>("maxHitPoints", 1);
+    const hitPoints = useLocalStorage<number>("hitPoints", maxHitPoints || 1);
+
+    const spellcastingAbility = useLocalStorage<keyof Statistics>(
+      "spellcastingAbility",
+      "intelligence"
+    );
 
     const statistics = useLocalStorage<Statistics>(
       "statistics",
@@ -125,13 +134,19 @@ export const useCharacterStore = defineStore(
       calculatedModifier.value("dexterity")
     );
 
-    const passivePerception = computed<number>(() =>
-      10 + calculatedSkill.value("wisdom", "perception")
+    const passivePerception = computed<number>(
+      () => 10 + calculatedSkill.value("wisdom", "perception")
     );
 
-    const passiveInsight = computed<number>(() =>
-      10 + calculatedSkill.value("wisdom", "insight")
+    const passiveInsight = computed<number>(
+      () => 10 + calculatedSkill.value("wisdom", "insight")
     );
+
+    const spellAttackBonus = computed<number>(
+      () =>
+        calculatedModifier.value(spellcastingAbility.value) + proficiency.value
+    );
+    const spellSaveDC = computed<number>(() => 8 + spellAttackBonus.value);
 
     const toggleProficiency = (
       statistic: keyof Statistics,
@@ -170,6 +185,8 @@ export const useCharacterStore = defineStore(
       hitPoints,
       temporaryHitPoints,
       maxHitPoints,
+      spellAttackBonus,
+      spellSaveDC,
       toggleProficiency,
     };
   }

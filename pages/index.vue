@@ -23,6 +23,37 @@
 
         <li>
           <StatisticField
+            name="hitPoints"
+            v-model="hitPoints"
+            :min="1"
+            :max="maxHitPoints"
+          >
+            Hit Points
+          </StatisticField>
+        </li>
+
+        <li>
+          <StatisticField name="maxHitPoints" v-model="maxHitPoints" :min="1">
+            Hit Points
+          </StatisticField>
+        </li>
+
+        <li>
+          <StatisticField name="temporaryHitPoints" v-model="temporaryHitPoints" :min="1"
+            >Temporary Hit Points</StatisticField
+          >
+        </li>
+      </ol>
+
+      <ol>
+        <li>
+          <StatisticField name="initiative" v-model="initiative" :readonly="true">
+            Initiative
+          </StatisticField>
+        </li>
+
+        <li>
+          <StatisticField
             name="passivePerception"
             v-model="passivePerception"
             :readonly="true"
@@ -34,12 +65,6 @@
         <li>
           <StatisticField name="passiveInsight" v-model="passiveInsight" :readonly="true">
             Passive Insight
-          </StatisticField>
-        </li>
-
-        <li>
-          <StatisticField name="initiative" v-model="initiative" :readonly="true">
-            Initiative
           </StatisticField>
         </li>
       </ol>
@@ -99,6 +124,9 @@ const {
   initiative,
   passivePerception,
   passiveInsight,
+  hitPoints,
+  temporaryHitPoints,
+  maxHitPoints,
 } = storeToRefs(store);
 
 const { toggleProficiency } = store;

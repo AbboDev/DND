@@ -10,6 +10,9 @@ import { Dice } from "~/types/dice";
 export interface CharacterStore {
   name: RemovableRef<string>;
   level: RemovableRef<number>;
+  hitPoints: RemovableRef<number>;
+  temporaryHitPoints: RemovableRef<number>;
+  maxHitPoints: RemovableRef<number>;
   hitDiceUsed: RemovableRef<number>;
   hitDie: RemovableRef<Dice>;
   statistics: RemovableRef<Statistics>;
@@ -41,6 +44,10 @@ export const useCharacterStore = defineStore(
     const level = useLocalStorage<number>("level", 1);
     const hitDie = useLocalStorage<Dice>("hitDie", Dice.D8);
     const hitDiceUsed = useLocalStorage<number>("hitDiceUsed", 0);
+
+    const hitPoints = useLocalStorage<number>("hitPoints", 0);
+    const temporaryHitPoints = useLocalStorage<number>("temporaryHitPoints", 0);
+    const maxHitPoints = useLocalStorage<number>("maxHitPoints", 0);
 
     const statistics = useLocalStorage<Statistics>(
       "statistics",
@@ -154,6 +161,9 @@ export const useCharacterStore = defineStore(
       initiative,
       passivePerception,
       passiveInsight,
+      hitPoints,
+      temporaryHitPoints,
+      maxHitPoints,
       toggleProficiency,
     };
   }

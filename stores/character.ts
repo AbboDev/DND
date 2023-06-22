@@ -5,10 +5,13 @@ import {
 } from "@vueuse/core";
 
 import { Statistics, Skills } from "~/types/character";
+import { Dice } from "~/types/dice";
 
 export interface CharacterStore {
   name: RemovableRef<string>;
   level: RemovableRef<number>;
+  hitDiceUsed: RemovableRef<number>;
+  hitDie: RemovableRef<Dice>;
   statistics: RemovableRef<Statistics>;
   proficiency: RemovableRef<number>;
   proficiencies: RemovableRef<Skills>;
@@ -36,6 +39,8 @@ export const useCharacterStore = defineStore(
   () => {
     const name = useLocalStorage<string>("characterName", "");
     const level = useLocalStorage<number>("level", 1);
+    const hitDie = useLocalStorage<Dice>("hitDie", Dice.D8);
+    const hitDiceUsed = useLocalStorage<number>("hitDiceUsed", 0);
 
     const statistics = useLocalStorage<Statistics>(
       "statistics",
@@ -139,6 +144,8 @@ export const useCharacterStore = defineStore(
     return {
       name: skipHydrate(name),
       level: skipHydrate(level),
+      hitDie: skipHydrate(hitDie),
+      hitDiceUsed: skipHydrate(hitDiceUsed),
       statistics: skipHydrate(statistics),
       proficiency: skipHydrate(proficiency),
       proficiencies: skipHydrate(proficiencies),

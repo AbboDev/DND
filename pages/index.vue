@@ -15,6 +15,13 @@
         </li>
 
         <li>
+          <StatisticField name="hitDie" v-model="hitDiceUsed" :min="0" :max="hitDie">
+            Hit Dice
+            <template #calculated>d{{ hitDie }}</template>
+          </StatisticField>
+        </li>
+
+        <li>
           <StatisticField
             name="passivePerception"
             v-model="passivePerception"
@@ -82,6 +89,8 @@ const store = useCharacterStore();
 const {
   name,
   level,
+  hitDie,
+  hitDiceUsed,
   statistics,
   proficiency,
   proficiencies,

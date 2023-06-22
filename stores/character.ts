@@ -26,6 +26,8 @@ export interface CharacterStore {
     (statistic: keyof Statistics, skill: keyof Statistics) => number
   >;
   initiative: globalThis.ComputedRef<number>;
+  armorClass: globalThis.ComputedRef<number>;
+  speed: globalThis.ComputedRef<number>;
   passivePerception: globalThis.ComputedRef<number>;
   passiveInsight: globalThis.ComputedRef<number>;
 
@@ -44,6 +46,8 @@ export const useCharacterStore = defineStore(
     const level = useLocalStorage<number>("level", 1);
     const hitDie = useLocalStorage<Dice>("hitDie", Dice.D8);
     const hitDiceUsed = useLocalStorage<number>("hitDiceUsed", 0);
+    const armorClass = useLocalStorage<number>("armorClass", 10);
+    const speed = useLocalStorage<number>("speed", 9);
 
     const hitPoints = useLocalStorage<number>("hitPoints", 0);
     const temporaryHitPoints = useLocalStorage<number>("temporaryHitPoints", 0);
@@ -159,6 +163,8 @@ export const useCharacterStore = defineStore(
       calculatedSkill,
       calculatedModifier,
       initiative,
+      armorClass,
+      speed,
       passivePerception,
       passiveInsight,
       hitPoints,

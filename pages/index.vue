@@ -53,6 +53,19 @@
         </li>
 
         <li>
+          <StatisticField name="armorClass" v-model="armorClass" :readonly="true">
+            AC
+          </StatisticField>
+        </li>
+
+        <li>
+          <StatisticField name="speed" v-model="speed" :readonly="true">
+            Speed
+            <template #calculated>m</template>
+          </StatisticField>
+        </li>
+
+        <li>
           <StatisticField
             name="passivePerception"
             v-model="passivePerception"
@@ -122,6 +135,8 @@ const {
   calculatedSkill,
   calculatedModifier,
   initiative,
+  armorClass,
+  speed,
   passivePerception,
   passiveInsight,
   hitPoints,

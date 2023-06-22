@@ -115,11 +115,11 @@ export const useCharacterStore = defineStore(
     );
 
     const passivePerception = computed<number>(() =>
-      calculatedSkill.value("wisdom", "perception")
+      10 + calculatedSkill.value("wisdom", "perception")
     );
 
     const passiveInsight = computed<number>(() =>
-      calculatedSkill.value("wisdom", "insight")
+      10 + calculatedSkill.value("wisdom", "insight")
     );
 
     const toggleProficiency = (

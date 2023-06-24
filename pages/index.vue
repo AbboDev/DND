@@ -1,6 +1,9 @@
 <template>
   <main>
-    <TextField v-model="name">Character Name</TextField>
+    <InputField>
+      <template #label> Character Name </template>
+      <InputText v-model="name" :name="name" />
+    </InputField>
 
     <ClientOnly>
       <ol>
@@ -144,14 +147,12 @@
                 >
                   <template #output>
                     <InputField size="medium">
-                      <template #input>
-                        <InputNumber
-                          :name="`remainingSpellSlotsLevel${level}`"
-                          :min="0"
-                          :max="spellSlots[level]"
-                          v-model="spellSlotsUsed[level]"
-                        />
-                      </template>
+                      <InputNumber
+                        :name="`remainingSpellSlotsLevel${level}`"
+                        :min="0"
+                        :max="spellSlots[level]"
+                        v-model="spellSlotsUsed[level]"
+                      />
                     </InputField>
                   </template>
 
@@ -159,14 +160,12 @@
 
                   <template #max>
                     <InputField size="medium">
-                      <template #input>
-                        <InputNumber
-                          :name="`maxSpellSlotsLevel${level}`"
-                          :min="1"
-                          :modelValue="spellSlots[level]"
-                          @update:modelValue="(slot) => updateSpellSlots(level, slot)"
-                        />
-                      </template>
+                      <InputNumber
+                        :name="`maxSpellSlotsLevel${level}`"
+                        :min="1"
+                        :modelValue="spellSlots[level]"
+                        @update:modelValue="(slot) => updateSpellSlots(level, slot)"
+                      />
                     </InputField>
                   </template>
                 </RangeField>

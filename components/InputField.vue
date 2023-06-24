@@ -1,7 +1,7 @@
 <template>
   <div class="o-field" :class="classes">
-    <label v-if="slots.default"><slot /></label>
-    <slot name="input" />
+    <label v-if="slots.label"><slot name="label" /></label>
+    <slot />
   </div>
 </template>
 
@@ -33,7 +33,7 @@ const classes = computed(() => {
   }
 
   input {
-    width: auto;
+    width: 100%;
     border-radius: 4px;
     padding: 0.5rem;
     border: 1px solid var(--fg);

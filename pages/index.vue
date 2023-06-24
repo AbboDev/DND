@@ -136,23 +136,39 @@
             <template v-for="(slots, level) in spellSlots">
               <li v-if="slots > 0" :key="level">
                 <RangeField
-                  :name="`maxSpellSlotsLevel${level}`"
+                  :name="`usedSpellSlotsLevel${level}`"
                   :min="0"
                   :max="slots"
                   v-model="spellSlotsUsed[level]"
                   :values="slots"
                 >
-                  <template #output>{{ spellSlotsUsed[level] }}</template>
+                  <template #output>
+                    <InputField size="medium">
+                      <template #input>
+                        <InputNumber
+                          :name="`remainingSpellSlotsLevel${level}`"
+                          :min="0"
+                          :max="spellSlots[level]"
+                          v-model="spellSlotsUsed[level]"
+                        />
+                      </template>
+                    </InputField>
+                  </template>
+
                   {{ ordinalSuffix(level) }} Spell Slots
+
                   <template #max>
-                    <StatisticField
-                      :name="`maxSpellSlotsLevel${level}`"
-                      :min="1"
-                      :modelValue="spellSlots[level]"
-                      @update:modelValue="(slot) => updateSpellSlots(level, slot)"
-                    >
-                    </StatisticField
-                  ></template>
+                    <InputField size="medium">
+                      <template #input>
+                        <InputNumber
+                          :name="`maxSpellSlotsLevel${level}`"
+                          :min="1"
+                          :modelValue="spellSlots[level]"
+                          @update:modelValue="(slot) => updateSpellSlots(level, slot)"
+                        />
+                      </template>
+                    </InputField>
+                  </template>
                 </RangeField>
               </li>
             </template>

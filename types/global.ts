@@ -1,0 +1,1 @@
+type NumericalString = `${number}` | number;

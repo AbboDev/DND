@@ -1,30 +1,31 @@
 <template>
-  <label class="o-range-field">
-    <span v-if="slots.default" class="o-range-field__label"><slot /></span>
+  <div class="o-range-field" @click="focusInput">
+    <label v-if="slots.default" class="o-range-field__label"><slot /></label>
 
-    <span v-if="slots.output" class="o-range-field__calculated"
-      ><slot name="output"
-    /></span>
-    <input
-      class="o-range-field__input"
-      type="range"
-      :name="name"
-      @input="
-        $emit(
-          'update:modelValue',
-          parseFloat(($event.target as HTMLInputElement).value)
-        )
-      "
-      :list="dataListName"
-      :min="min"
-      :max="max"
-      :step="step"
-      :value="modelValue"
-      :style="{ '--min': min, '--max': max, '--step': modelValue }"
-    />
-    <output v-if="slots.max" class="o-range-field__calculated"
-      ><slot name="max"
-    /></output>
+    <div class="o-range-field__bar">
+      <slot name="output" />
+
+      <input
+        ref="input"
+        class="o-range-field__input"
+        type="range"
+        :name="name"
+        @input="
+          $emit(
+            'update:modelValue',
+            parseFloat(($event.target as HTMLInputElement).value)
+          )
+        "
+        :list="dataListName"
+        :min="min"
+        :max="max"
+        :step="step"
+        :value="modelValue"
+        :style="{ '--min': min, '--max': max, '--step': modelValue }"
+      />
+
+      <slot name="max" />
+    </div>
 
     <datalist :id="dataListName" v-if="dataListRecords.length">
       <option
@@ -34,7 +35,7 @@
         :label="value.label"
       ></option>
     </datalist>
-  </label>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -50,6 +51,8 @@ export interface Props {
   modelValue?: number;
   name: string;
 }
+
+const input = ref(null);
 
 const props = withDefaults(defineProps<Props>(), {
   values: () => [],
@@ -122,6 +125,7 @@ const dataListRecords = computed(() => {
   font-size: 1rem;
   align-items: center;
   justify-content: flex-start;
+  flex-direction: column;
   flex-wrap: wrap;
   cursor: pointer;
   user-select: none;
@@ -137,19 +141,15 @@ const dataListRecords = computed(() => {
     display: block;
   }
 
-  #{&}__calculated {
-    border: 1px solid var(--fg);
-    border-radius: 4px;
-    padding: 0.25rem;
-    font-size: 1.5rem;
-    background-color: var(--bg);
-    color: var(--fg);
-    margin: 0 0;
+  #{&}__input {
     flex: 0 0 auto;
   }
 
-  #{&}__input {
-    flex: 0 0 auto;
+  #{&}__bar {
+    @debug &;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
   }
 
   input[type="range"] {

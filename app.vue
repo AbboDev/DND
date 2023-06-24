@@ -52,4 +52,10 @@ input[type="number"] {
     --bg: black;
   }
 }
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 </style>

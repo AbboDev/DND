@@ -4,7 +4,7 @@ import {
   RemovableRef,
 } from "@vueuse/core";
 
-import { Statistics, Skills } from "~/types/character";
+import { Statistics, Skills, SpellSlotsPerLevel } from "~/types/character";
 import { Dice } from "~/types/dice";
 
 export interface CharacterStore {
@@ -22,6 +22,8 @@ export interface CharacterStore {
   spellcastingAbility: RemovableRef<keyof Statistics>;
   spellAttackBonus: globalThis.ComputedRef<number>;
   spellSaveDC: globalThis.ComputedRef<number>;
+  spellSlots: RemovableRef<SpellSlotsPerLevel>;
+  spellSlotsUsed: RemovableRef<SpellSlotsPerLevel>;
 
   calculatedSkill: globalThis.ComputedRef<
     (statistic: keyof Statistics) => number
@@ -34,6 +36,8 @@ export interface CharacterStore {
   speed: globalThis.ComputedRef<number>;
   passivePerception: globalThis.ComputedRef<number>;
   passiveInsight: globalThis.ComputedRef<number>;
+
+  updateSpellSlots(level: keyof SpellSlotsPerLevel, slot: number): void;
 
   toggleProficiency(
     statistic: keyof Statistics,
@@ -72,6 +76,30 @@ export const useCharacterStore = defineStore(
         wisdom: 10,
         charisma: 10,
       },
+      { serializer: StorageSerializers.object }
+    );
+
+    const defaultSpellSlotsStack = {
+      1: 1,
+      2: 1,
+      3: 1,
+      4: 1,
+      5: 1,
+      6: 1,
+      7: 1,
+      8: 1,
+      9: 1,
+    };
+
+    const spellSlots = useLocalStorage<SpellSlotsPerLevel>(
+      "spellSlots",
+      { ...defaultSpellSlotsStack },
+      { serializer: StorageSerializers.object }
+    );
+
+    const spellSlotsUsed = useLocalStorage<SpellSlotsPerLevel>(
+      "spellSlotsUsed",
+      { ...defaultSpellSlotsStack },
       { serializer: StorageSerializers.object }
     );
 
@@ -148,6 +176,17 @@ export const useCharacterStore = defineStore(
     );
     const spellSaveDC = computed<number>(() => 8 + spellAttackBonus.value);
 
+    const updateSpellSlots = (
+      level: keyof SpellSlotsPerLevel,
+      slot: number
+    ): void => {
+      spellSlots.value[level] = slot;
+
+      if (spellSlotsUsed.value[level] > slot) {
+        spellSlotsUsed.value[level] = slot;
+      }
+    };
+
     const toggleProficiency = (
       statistic: keyof Statistics,
       skill: string,
@@ -187,6 +226,9 @@ export const useCharacterStore = defineStore(
       maxHitPoints: skipHydrate(maxHitPoints),
       spellAttackBonus,
       spellSaveDC,
+      spellSlots: skipHydrate(spellSlots),
+      spellSlotsUsed: skipHydrate(spellSlotsUsed),
+      updateSpellSlots,
       toggleProficiency,
     };
   }

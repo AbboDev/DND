@@ -131,6 +131,33 @@
             Spell Save DC
           </StatisticField>
         </li>
+        <li>
+          <ol>
+            <template v-for="(slots, level) in spellSlots">
+              <li v-if="slots > 0" :key="level">
+                <RangeField
+                  :name="`maxSpellSlotsLevel${level}`"
+                  :min="0"
+                  :max="slots"
+                  v-model="spellSlotsUsed[level]"
+                  :values="slots"
+                >
+                  <template #output>{{ spellSlotsUsed[level] }}</template>
+                  {{ ordinalSuffix(level) }} Spell Slots
+                  <template #max>
+                    <StatisticField
+                      :name="`maxSpellSlotsLevel${level}`"
+                      :min="1"
+                      :modelValue="spellSlots[level]"
+                      @update:modelValue="(slot) => updateSpellSlots(level, slot)"
+                    >
+                    </StatisticField
+                  ></template>
+                </RangeField>
+              </li>
+            </template>
+          </ol>
+        </li>
       </ol>
     </ClientOnly>
   </main>
@@ -139,6 +166,7 @@
 <script setup lang="ts">
 import { useCharacterStore } from "@/stores/character";
 import { Statistics } from "~/types/character";
+import { ordinalSuffix } from "../utilities/number";
 
 const store = useCharacterStore();
 const {
@@ -161,9 +189,11 @@ const {
   maxHitPoints,
   spellAttackBonus,
   spellSaveDC,
+  spellSlots,
+  spellSlotsUsed,
 } = storeToRefs(store);
 
-const { toggleProficiency } = store;
+const { toggleProficiency, updateSpellSlots } = store;
 
 function addProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
   toggleProficiency(statistic, skill, add ? 1 : 0);

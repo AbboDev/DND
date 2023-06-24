@@ -6,6 +6,8 @@
     :min="min"
     :step="step"
     :max="max"
+    :disable="disable"
+    :readonly="readonly"
     :value="modelValue"
     @input="
       $emit(

@@ -13,7 +13,12 @@
         :disable="disable"
         :readonly="readonly"
         autocomplete="off"
-        @input="$emit('update:modelValue', $event.target.value)"
+        @input="
+          $emit(
+            'update:modelValue',
+            parseFloat(($event.target as HTMLInputElement).value)
+          )
+        "
       />
 
       <span v-if="slots.calculated" class="o-statistic__calculated"

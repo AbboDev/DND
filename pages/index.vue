@@ -21,7 +21,7 @@
             label="Hit Dice"
             v-model="hitDiceUsed"
             :min="0"
-            :max="hitDie"
+            :max="level"
           >
             <template #calculated>
               <TextInput :name="name" :readonly="true" :model-value="`d${hitDie}`" />

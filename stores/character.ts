@@ -4,9 +4,15 @@ import {
   RemovableRef,
 } from "@vueuse/core";
 
-import { Statistics, Skills, SpellSlotsPerLevel } from "~/types/character";
+import {
+  Statistics,
+  Skills,
+  SpellSlotsPerLevel,
+  CoreBackgrounds,
+  CoreClasses,
+} from "~/types/character";
 import { Dice } from "~/types/dice";
-import { Alignment } from '~/types/alignments';
+import { Alignment } from "~/types/alignments";
 
 export interface CharacterStore {
   name: RemovableRef<string>;
@@ -22,6 +28,8 @@ export interface CharacterStore {
   proficiencies: RemovableRef<Skills>;
 
   alignment: RemovableRef<keyof typeof Alignment>;
+  characterClass: RemovableRef<keyof CoreClasses>;
+  background: RemovableRef<keyof CoreBackgrounds>;
 
   spellcastingAbility: RemovableRef<keyof Statistics>;
   spellAttackBonus: globalThis.ComputedRef<number>;
@@ -65,19 +73,28 @@ export const useCharacterStore = defineStore(
     const hitDiceUsed = useLocalStorage<number>("hitDiceUsed", 0);
     const speed = useLocalStorage<number>("speed", 9);
 
+    const characterClass = useLocalStorage<CoreClasses>(
+      "class",
+      CoreClasses.Artificer
+    );
+    const background = useLocalStorage<CoreBackgrounds>(
+      "background",
+      CoreBackgrounds.Acolyte
+    );
+
     const temporaryHitPoints = useLocalStorage<number>("temporaryHitPoints", 0);
     const maxHitPoints = useLocalStorage<number>("maxHitPoints", 1);
-    const hitPoints = useLocalStorage<number>("hitPoints", maxHitPoints.value || 1);
+    const hitPoints = useLocalStorage<number>(
+      "hitPoints",
+      maxHitPoints.value || 1
+    );
 
     const alignment = useLocalStorage<keyof typeof Alignment>(
       "alignment",
       "Neutral"
     );
 
-    const updateMaxHitPoints = (
-      hp: number,
-      remove = false
-    ): void => {
+    const updateMaxHitPoints = (hp: number, remove = false): void => {
       if (remove) {
         maxHitPoints.value -= hp;
       } else {
@@ -192,7 +209,10 @@ export const useCharacterStore = defineStore(
     const baseArmorClass = useLocalStorage<number>("baseArmorClass", 10);
     const shieldArmorClass = useLocalStorage<number>("shieldArmorClass", 0);
     const armorClass = computed(
-      () => baseArmorClass.value + shieldArmorClass.value + calculatedModifier.value("dexterity")
+      () =>
+        baseArmorClass.value +
+        shieldArmorClass.value +
+        calculatedModifier.value("dexterity")
     );
 
     const calculatedSkill = computed(
@@ -255,6 +275,8 @@ export const useCharacterStore = defineStore(
     return {
       name: skipHydrate(name),
       alignment: skipHydrate(alignment),
+      characterClass: skipHydrate(characterClass),
+      background: skipHydrate(background),
       level: skipHydrate(level),
       hitDie: skipHydrate(hitDie),
       hitDiceUsed: skipHydrate(hitDiceUsed),

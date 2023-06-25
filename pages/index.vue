@@ -1,15 +1,29 @@
 <template>
   <main>
-    <InputField :full-width="true">
-      <template #label> Character Name </template>
-      <TextInput v-model="name" name="name" />
-    </InputField>
-
-    <AlignmentField name="alignment" size="normal" :full-width="true" v-model="alignment">
-      <template #label> Alignment </template>
-    </AlignmentField>
-
     <ClientOnly>
+      <InputField :full-width="true">
+        <template #label> Character Name </template>
+        <TextInput v-model="name" name="name" />
+      </InputField>
+
+      <ol>
+        <li>
+          <AlignmentField name="alignment" size="normal" v-model="alignment">
+            <template #label> Alignment </template>
+          </AlignmentField>
+        </li>
+        <li>
+          <ClassField name="class" size="normal" v-model="characterClass">
+            <template #label> Class </template>
+          </ClassField>
+        </li>
+        <li>
+          <BackgroundField name="background" size="normal" v-model="background">
+            <template #label> Background </template>
+          </BackgroundField>
+        </li>
+      </ol>
+
       <ol>
         <li>
           <StatisticField
@@ -246,6 +260,8 @@ const store = useCharacterStore();
 const {
   name,
   alignment,
+  characterClass,
+  background,
   level,
   hitDie,
   hitDiceUsed,

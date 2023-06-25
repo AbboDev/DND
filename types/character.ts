@@ -22,3 +22,40 @@ export type SpellSlotsPerLevel = {
 export type Skills = {
   [P in keyof Statistics]?: Record<string, number>;
 };
+
+export enum CoreClasses {
+  Artificer = "Artificer",
+  Barbarian = "Barbarian",
+  Bard = "Bard",
+  Cleric = "Cleric",
+  Druid = "Druid",
+  Fighter = "Fighter",
+  Monk = "Monk",
+  Paladin = "Paladin",
+  Ranger = "Ranger",
+  Rogue = "Rogue",
+  Sorcerer = "Sorcerer",
+  Warlock = "Warlock",
+  Wizard = "Wizard",
+}
+
+export enum CoreBackgrounds {
+  Acolyte = "Acolyte",
+  Charlatan = "Charlatan",
+  Criminal = "Criminal / Spy",
+  Spy = CoreBackgrounds.Criminal,
+  Entertainer = "Entertainer",
+  FolkHero = "Folk Hero",
+  Gladiator = "Gladiator",
+  Artisan = "Guild Artisan / Guild Merchant",
+  Merchant = CoreBackgrounds.Artisan,
+  Hermit = "Hermit",
+  Knight = "Knight",
+  Noble = "Noble",
+  Outlander = "Outlander",
+  Pirate = "Pirate",
+  Sage = "Sage",
+  Sailor = "Sailor",
+  Soldier = "Soldier",
+  Urchin = "Urchin",
+}

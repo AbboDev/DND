@@ -124,22 +124,24 @@
 
           <ol>
             <li v-for="(skillValue, skill) in proficiencies[statistic]" :key="skill">
-              <Transition v-if="skill !== 'savingThrows'">
-                <CheckboxField
-                  v-if="proficiencies[statistic]?.[skill]"
-                  class="is-absolute"
-                  :name="skill"
-                  :model-value="(proficiencies[statistic]?.[skill] || 0) > 1"
-                  @update:model-value="(event: boolean) => addDoubleProficiency(event, statistic, skill)"
-                />
-              </Transition>
-
               <CheckboxField
                 :name="`${statistic}${capitalize(skill)}`"
                 :label="capitalize(skill)"
                 :model-value="(proficiencies[statistic]?.[skill] || 0) > 0"
                 @update:model-value="(event: boolean) => addProficiency(event, statistic, skill)"
               >
+                <template #inputs v-if="skill !== 'savingThrows'">
+                  <Transition>
+                    <CheckboxInput
+                      v-if="proficiencies[statistic]?.[skill]"
+                      class="is-absolute"
+                      :name="skill"
+                      :model-value="(proficiencies[statistic]?.[skill] || 0) > 1"
+                      @update:model-value="(event: boolean) => addDoubleProficiency(event, statistic, skill)"
+                    />
+                  </Transition>
+                </template>
+
                 <template #calculated>
                   <NumberInput
                     :name="`${statistic}${capitalize(skill)}Modifier`"

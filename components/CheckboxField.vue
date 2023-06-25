@@ -1,6 +1,10 @@
 <template>
   <InputField :class="classes" :size="size" :name="name">
-    <CheckboxInput :name="name" v-model="value" />
+    <div class="o-field__inputs">
+      <CheckboxInput :name="name" v-model="value" />
+
+      <slot name="inputs" />
+    </div>
 
     <template #labelAfter v-if="slots.label || label">
       <slot name="label">

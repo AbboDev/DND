@@ -284,7 +284,7 @@ ol {
   flex-wrap: nowrap;
   list-style: none;
   justify-content: space-between;
-  margin: 0 0 1rem;
+  margin: 1rem 0;
   padding: 0;
 
   & > li {

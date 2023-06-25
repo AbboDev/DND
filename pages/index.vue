@@ -110,7 +110,7 @@
         <li v-for="(statisticValue, statistic) in statistics" :key="statistic">
           <StatisticField
             :name="statistic"
-            :label="statistic"
+            :label="capitalize(statistic)"
             v-model="statistics[statistic]"
           >
             <template #calculated>
@@ -129,21 +129,20 @@
                   v-if="proficiencies[statistic]?.[skill]"
                   class="is-absolute"
                   :name="skill"
-                  :value="(proficiencies[statistic]?.[skill] || 0) > 1"
-                  @change="(event: boolean) => addDoubleProficiency(event, statistic, skill)"
+                  :model-value="(proficiencies[statistic]?.[skill] || 0) > 1"
+                  @update:model-value="(event: boolean) => addDoubleProficiency(event, statistic, skill)"
                 />
               </Transition>
 
               <CheckboxField
-                :name="skill"
-                :value="proficiencies[statistic]?.[skill]"
-                @change="(event: boolean) => addProficiency(event, statistic, skill)"
+                :name="`${statistic}${capitalize(skill)}`"
+                :label="capitalize(skill)"
+                :model-value="(proficiencies[statistic]?.[skill] || 0) > 0"
+                @update:model-value="(event: boolean) => addProficiency(event, statistic, skill)"
               >
-                {{ skill.toUpperCase() }}
-
                 <template #calculated>
                   <NumberInput
-                    :name="`${skill}Modifier`"
+                    :name="`${statistic}${capitalize(skill)}Modifier`"
                     :model-value="calculatedSkill(statistic, skill)"
                     :readonly="true"
                   />
@@ -201,7 +200,7 @@
                         :name="`maxSpellSlotsLevel${level}`"
                         :min="1"
                         :modelValue="spellSlots[level]"
-                        @update:modelValue="(slot) => updateSpellSlots(level, slot)"
+                        @update:model-value="(slot) => updateSpellSlots(level, slot)"
                       />
                     </InputField>
                   </template>
@@ -219,6 +218,7 @@
 import { useCharacterStore } from "@/stores/character";
 import { Statistics } from "~/types/character";
 import { ordinalSuffix } from "~/utilities/number";
+import { capitalize } from "~/utilities/string";
 
 const store = useCharacterStore();
 const {

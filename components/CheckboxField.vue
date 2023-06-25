@@ -1,102 +1,84 @@
 <template>
-  <label class="o-checkbox-field">
-    <span class="o-checkbox-field__input">
-      <input
-        type="checkbox"
-        :name="props.name"
-        :checked="props.value"
-        @input="$emit('change', $event.target.checked)"
-      />
-      <span></span>
-    </span>
+  <InputField :class="classes" :size="size" :name="name">
+    <CheckboxInput :name="name" v-model="value" />
 
-    <span v-if="slots.default" class="o-checkbox-field__label"><slot /></span>
+    <template #labelAfter v-if="slots.label || label">
+      <slot name="label">
+        {{ label }}
+      </slot>
+    </template>
 
-    <span v-if="slots.calculated" class="o-checkbox-field__calculated"
-      ><slot name="calculated"
-    /></span>
-  </label>
+    <template #append>
+      <InputField v-if="slots.calculated" class="is-calculated" :size="calculatedSize">
+        <slot name="calculated" />
+      </InputField>
+    </template>
+  </InputField>
 </template>
 
-<script setup>
-const props = defineProps({
-  value: {
-    type: [Number, Boolean],
-    default: 0,
-  },
-  name: {
-    type: String,
-    required: true,
-  },
+<script setup lang="ts">
+import { InputFontSize } from "~/types/html";
+
+export interface Props {
+  name: string;
+  size?: InputFontSize;
+  calculatedSize?: InputFontSize;
+  label?: string;
+  disable?: boolean;
+  modelValue: boolean | number;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  size: "big",
+  calculatedSize: "medium",
+  disable: false,
 });
 
-defineEmits(["change"]);
+const emit = defineEmits(["update:modelValue"]);
 
 const slots = useSlots();
+
+const classes = computed(() => {
+  const classes = ["o-field--checkbox", `is-${props.size}`];
+
+  if (slots.calculated) {
+    classes.push("has-calculated");
+  }
+
+  return classes;
+});
+
+const value = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit("update:modelValue", value);
+  },
+});
 </script>
 
 <style lang="scss">
-.o-checkbox-field {
-  display: flex;
-  text-align: center;
-  font-size: 1rem;
-  align-items: center;
-  justify-content: flex-start;
-  flex-wrap: nowrap;
-  cursor: pointer;
-  user-select: none;
+.o-field {
+  $this: &;
 
-  #{&}__input {
-    --radius: 4px;
-    margin: 0;
-    display: block;
-    border-radius: var(--radius);
-    padding: 0;
-    position: relative;
-    border: 1px solid var(--fg);
-    background-color: var(--bg);
-    color: var(--fg);
-    flex: 0 0 auto;
-    width: 1rem;
-    height: 1rem;
-    overflow: hidden;
-
-    span {
-      --opacity: 0;
-      position: absolute;
-      inset: 3px;
-      pointer-events: none;
-      background-color: var(--fg);
-      border-radius: var(--radius);
-      transition: opacity 300ms ease-in-out;
-      opacity: var(--opacity);
-    }
-
-    input {
-      appearance: none;
-
-      &:checked {
-        & + span {
-          --opacity: 1;
-        }
-      }
-    }
-  }
-
-  #{&}__label {
-    margin: 0 0.5rem;
-    display: block;
-  }
-
-  #{&}__calculated {
-    border: 1px solid var(--fg);
-    border-radius: 4px;
-    padding: 0.25rem;
+  &#{$this}--checkbox {
+    display: flex;
     font-size: 1rem;
-    background-color: var(--bg);
-    color: var(--fg);
-    margin: 0 0 0 auto;
-    width: auto;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    cursor: pointer;
+    user-select: none;
+    text-align: left;
+
+    #{$this}__label {
+      margin: 0 0.5rem;
+    }
+
+    & > .is-calculated {
+      margin-left: auto;
+    }
   }
 }
 </style>

@@ -237,7 +237,6 @@ const store = useCharacterStore();
 const {
   name,
   alignment,
-  extendedAlignment,
   level,
   hitDie,
   hitDiceUsed,

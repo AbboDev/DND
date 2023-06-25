@@ -59,7 +59,7 @@ export const useCharacterStore = defineStore(
 
     const temporaryHitPoints = useLocalStorage<number>("temporaryHitPoints", 0);
     const maxHitPoints = useLocalStorage<number>("maxHitPoints", 1);
-    const hitPoints = useLocalStorage<number>("hitPoints", maxHitPoints || 1);
+    const hitPoints = useLocalStorage<number>("hitPoints", maxHitPoints.value || 1);
 
     const spellcastingAbility = useLocalStorage<keyof Statistics>(
       "spellcastingAbility",

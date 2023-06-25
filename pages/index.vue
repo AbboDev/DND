@@ -41,8 +41,9 @@
               <NumberInput
                 name="maxHitPoints"
                 label="Hit Points"
-                v-model="maxHitPoints"
-                :min="1"
+                :min="0"
+                :model-value="maxHitPoints"
+                @update:model-value="(hp) => updateMaxHitPoints(hp)"
               />
             </template>
           </StatisticField>
@@ -247,7 +248,7 @@ const {
   spellSlotsUsed,
 } = storeToRefs(store);
 
-const { toggleProficiency, updateSpellSlots } = store;
+const { toggleProficiency, updateSpellSlots, updateMaxHitPoints } = store;
 
 function addProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
   toggleProficiency(statistic, skill, add ? 1 : 0);

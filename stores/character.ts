@@ -38,6 +38,7 @@ export interface CharacterStore {
   passiveInsight: globalThis.ComputedRef<number>;
 
   updateSpellSlots(level: keyof SpellSlotsPerLevel, slot: number): void;
+  updateMaxHitPoints(hp: number, remove: boolean): void;
 
   toggleProficiency(
     statistic: keyof Statistics,
@@ -60,6 +61,25 @@ export const useCharacterStore = defineStore(
     const temporaryHitPoints = useLocalStorage<number>("temporaryHitPoints", 0);
     const maxHitPoints = useLocalStorage<number>("maxHitPoints", 1);
     const hitPoints = useLocalStorage<number>("hitPoints", maxHitPoints.value || 1);
+
+    const updateMaxHitPoints = (
+      hp: number,
+      remove = false
+    ): void => {
+      if (remove) {
+        maxHitPoints.value -= hp;
+      } else {
+        maxHitPoints.value = hp;
+      }
+
+      if (maxHitPoints.value < 0) {
+        maxHitPoints.value = 0;
+      }
+
+      if (hitPoints.value > maxHitPoints.value) {
+        hitPoints.value = maxHitPoints.value;
+      }
+    };
 
     const spellcastingAbility = useLocalStorage<keyof Statistics>(
       "spellcastingAbility",
@@ -228,6 +248,7 @@ export const useCharacterStore = defineStore(
       spellSaveDC,
       spellSlots: skipHydrate(spellSlots),
       spellSlotsUsed: skipHydrate(spellSlotsUsed),
+      updateMaxHitPoints,
       updateSpellSlots,
       toggleProficiency,
     };

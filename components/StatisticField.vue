@@ -8,7 +8,6 @@
 
     <div class="o-field__inputs">
       <NumberInput
-        class="o-input"
         :name="name"
         :min="min"
         :step="step"
@@ -20,11 +19,7 @@
       <slot name="inputs" />
     </div>
 
-    <InputField
-      v-if="slots.calculated"
-      class="o-field o-field--calculated"
-      :size="calculatedSize"
-    >
+    <InputField v-if="slots.calculated" class="is-calculated" :size="calculatedSize">
       <slot name="calculated" />
     </InputField>
   </InputField>
@@ -89,20 +84,20 @@ const value = computed({
     flex-direction: column;
     align-items: center;
 
-    .o-input {
-      @at-root .has-calculated#{&} {
-        padding-bottom: 1.5rem;
-      }
-    }
-
     #{$this}__inputs {
       display: flex;
       flex-wrap: nowrap;
-    }
-  }
 
-  #{$this}--calculated {
-    margin: -1rem auto 0;
+      input {
+        @at-root .has-calculated#{&} {
+          padding-bottom: 1.5rem;
+        }
+      }
+    }
+
+    & > .is-calculated {
+      margin: -1rem auto 0;
+    }
   }
 }
 </style>

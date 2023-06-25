@@ -157,16 +157,16 @@ const dataListRecords = computed(() => {
     width: 200px;
     height: 10px;
     position: relative;
-    border: 1px solid #fff;
+    border: 1px solid var(--fg);
     border-radius: 5px;
     background: repeating-linear-gradient(
       90deg,
-      #000 0,
-      #000 2px,
-      #fff 2px,
-      #fff calc(100% - 2px),
-      #000 calc(100% - 2px),
-      #000 100%
+      var(--bg) 0,
+      var(--bg) 2px,
+      var(--fg) 2px,
+      var(--fg) calc(100% - 2px),
+      var(--bg) calc(100% - 2px),
+      var(--bg) 100%
     );
     background-size: calc(100% / var(--max, 1)) 4px;
     background-position: center left;
@@ -180,18 +180,14 @@ const dataListRecords = computed(() => {
       width: 12px;
 
       border-radius: 3px;
-      outline: 1px solid #fff;
-      border: 3px solid #000;
+      outline: 1px solid var(--fg);
+      border: 3px solid var(--bg);
 
-      background: #fff;
+      background: var(--fg);
       cursor: ew-resize;
-      // border: 1px solid #000;
-      box-shadow: 0 0 2px 3px #000;
+      // border: 1px solid var(--bg);
+      box-shadow: 0 0 2px 3px var(--bg);
       transform: rotate(45deg);
-
-      &:hover {
-        background: #fff;
-      }
     }
 
     &::-webkit-slider-thumb,

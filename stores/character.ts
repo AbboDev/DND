@@ -39,6 +39,7 @@ export interface CharacterStore {
 
   updateSpellSlots(level: keyof SpellSlotsPerLevel, slot: number): void;
   updateMaxHitPoints(hp: number, remove: boolean): void;
+  updateLevel(level: number): void;
 
   toggleProficiency(
     statistic: keyof Statistics,
@@ -78,6 +79,14 @@ export const useCharacterStore = defineStore(
 
       if (hitPoints.value > maxHitPoints.value) {
         hitPoints.value = maxHitPoints.value;
+      }
+    };
+
+    const updateLevel = (newLevel: number): void => {
+      level.value = newLevel;
+
+      if (hitDiceUsed.value > level.value) {
+        hitDiceUsed.value = level.value;
       }
     };
 
@@ -249,6 +258,7 @@ export const useCharacterStore = defineStore(
       spellSlots: skipHydrate(spellSlots),
       spellSlotsUsed: skipHydrate(spellSlotsUsed),
       updateMaxHitPoints,
+      updateLevel,
       updateSpellSlots,
       toggleProficiency,
     };

@@ -8,7 +8,13 @@
     <ClientOnly>
       <ol>
         <li>
-          <StatisticField name="level" label="Level" v-model="level" :min="1" />
+          <StatisticField
+            name="level"
+            label="Level"
+            :min="1"
+            :model-value="level"
+            @update:model-value="(level) => updateLevel(level)"
+          />
         </li>
 
         <li>
@@ -248,7 +254,7 @@ const {
   spellSlotsUsed,
 } = storeToRefs(store);
 
-const { toggleProficiency, updateSpellSlots, updateMaxHitPoints } = store;
+const { toggleProficiency, updateSpellSlots, updateMaxHitPoints, updateLevel } = store;
 
 function addProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
   toggleProficiency(statistic, skill, add ? 1 : 0);

@@ -6,9 +6,11 @@ import {
 
 import { Statistics, Skills, SpellSlotsPerLevel } from "~/types/character";
 import { Dice } from "~/types/dice";
+import { Alignment } from '~/types/alignments';
 
 export interface CharacterStore {
   name: RemovableRef<string>;
+
   level: RemovableRef<number>;
   hitPoints: RemovableRef<number>;
   temporaryHitPoints: RemovableRef<number>;
@@ -18,6 +20,8 @@ export interface CharacterStore {
   statistics: RemovableRef<Statistics>;
   proficiency: RemovableRef<number>;
   proficiencies: RemovableRef<Skills>;
+
+  alignment: RemovableRef<keyof typeof Alignment>;
 
   spellcastingAbility: RemovableRef<keyof Statistics>;
   spellAttackBonus: globalThis.ComputedRef<number>;
@@ -63,6 +67,11 @@ export const useCharacterStore = defineStore(
     const temporaryHitPoints = useLocalStorage<number>("temporaryHitPoints", 0);
     const maxHitPoints = useLocalStorage<number>("maxHitPoints", 1);
     const hitPoints = useLocalStorage<number>("hitPoints", maxHitPoints.value || 1);
+
+    const alignment = useLocalStorage<keyof typeof Alignment>(
+      "alignment",
+      "Neutral"
+    );
 
     const updateMaxHitPoints = (
       hp: number,
@@ -243,6 +252,7 @@ export const useCharacterStore = defineStore(
 
     return {
       name: skipHydrate(name),
+      alignment: skipHydrate(alignment),
       level: skipHydrate(level),
       hitDie: skipHydrate(hitDie),
       hitDiceUsed: skipHydrate(hitDiceUsed),

@@ -57,6 +57,8 @@ const classes = computed(() => {
     cursor: pointer;
   }
 
+  select,
+  textarea,
   input:not([type="checkbox"]):not([type="radio"]):not([type="range"]) {
     width: auto;
     border-radius: 4px;

@@ -2,8 +2,12 @@
   <main>
     <InputField :full-width="true">
       <template #label> Character Name </template>
-      <TextInput v-model="name" :name="name" />
+      <TextInput v-model="name" name="name" />
     </InputField>
+
+    <AlignmentField name="alignment" size="normal" :full-width="true" v-model="alignment">
+      <template #label> Alignment </template>
+    </AlignmentField>
 
     <ClientOnly>
       <ol>
@@ -232,6 +236,8 @@ import { capitalize } from "~/utilities/string";
 const store = useCharacterStore();
 const {
   name,
+  alignment,
+  extendedAlignment,
   level,
   hitDie,
   hitDiceUsed,

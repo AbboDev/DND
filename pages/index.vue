@@ -124,7 +124,7 @@
 
           <ol>
             <li v-for="(skillValue, skill) in proficiencies[statistic]" :key="skill">
-              <Transition>
+              <Transition v-if="skill !== 'savingThrows'">
                 <CheckboxField
                   v-if="proficiencies[statistic]?.[skill]"
                   class="is-absolute"

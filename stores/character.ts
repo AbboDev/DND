@@ -30,6 +30,7 @@ export interface CharacterStore {
   spellSlotsUsed: RemovableRef<SpellSlotsPerLevel>;
 
   baseArmorClass: RemovableRef<number>;
+  shieldArmorClass: RemovableRef<number>;
   armorClass: globalThis.ComputedRef<number>;
 
   calculatedSkill: globalThis.ComputedRef<
@@ -189,8 +190,9 @@ export const useCharacterStore = defineStore(
     );
 
     const baseArmorClass = useLocalStorage<number>("baseArmorClass", 10);
+    const shieldArmorClass = useLocalStorage<number>("shieldArmorClass", 0);
     const armorClass = computed(
-      () => baseArmorClass.value + calculatedModifier.value("dexterity")
+      () => baseArmorClass.value + shieldArmorClass.value + calculatedModifier.value("dexterity")
     );
 
     const calculatedSkill = computed(
@@ -263,6 +265,7 @@ export const useCharacterStore = defineStore(
       calculatedModifier,
       initiative,
       baseArmorClass: skipHydrate(baseArmorClass),
+      shieldArmorClass: skipHydrate(shieldArmorClass),
       armorClass,
       speed: skipHydrate(speed),
       passivePerception,

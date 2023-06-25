@@ -87,7 +87,16 @@
             label="AC"
             v-model="armorClass"
             :readonly="true"
-          />
+          >
+            <template #calculated>
+              <NumberInput
+                name="shieldArmorClass"
+                :min="0"
+                :max="2"
+                v-model="shieldArmorClass"
+              />
+            </template>
+          </StatisticField>
         </li>
 
         <li>
@@ -247,6 +256,7 @@ const {
   calculatedModifier,
   initiative,
   armorClass,
+  shieldArmorClass,
   speed,
   passivePerception,
   passiveInsight,

@@ -29,7 +29,7 @@ export interface Props {
   label?: string;
   disable?: boolean;
   readonly?: boolean;
-  modelValue: NumericalString;
+  modelValue: string | number;
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -23,7 +23,7 @@ export interface Props {
   name: string;
   disable?: boolean;
   readonly?: boolean;
-  modelValue: string;
+  modelValue: string | number;
 }
 
 const props = withDefaults(defineProps<Props>(), {

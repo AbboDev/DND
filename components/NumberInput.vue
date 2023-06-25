@@ -1,14 +1,14 @@
 <template>
   <input
     type="number"
-    :size="size"
     :name="name"
-    :min="min"
-    :step="step"
-    :max="max"
+    :size="size"
     :disable="disable"
     :readonly="readonly"
     :value="modelValue"
+    :min="min"
+    :step="step"
+    :max="max"
     @input="
       $emit(
         'update:modelValue',
@@ -37,8 +37,6 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 defineEmits(["update:modelValue"]);
-
-const slots = useSlots();
 
 const size = computed(() => {
   const { length } = props.modelValue.toString();

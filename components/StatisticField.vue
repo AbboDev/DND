@@ -1,112 +1,108 @@
 <template>
-  <div class="o-statistic" :class="{ 'has-calculated': slots.calculated }">
-    <label class="o-statistic__main">
-      <span v-if="slots.default" class="o-statistic__title"><slot /></span>
+  <InputField :class="classes" :size="size">
+    <template #label v-if="slots.label || label">
+      <slot name="label">
+        {{ label }}
+      </slot>
+    </template>
 
-      <input
+    <div class="o-field__inputs">
+      <NumberInput
+        class="o-input"
+        :name="name"
         :min="min"
+        :step="step"
         :max="max"
-        type="number"
-        :name="props.name"
-        class="o-statistic__input"
-        :value="modelValue"
         :disable="disable"
         :readonly="readonly"
-        autocomplete="off"
-        @input="
-          $emit(
-            'update:modelValue',
-            parseFloat(($event.target as HTMLInputElement).value)
-          )
-        "
+        v-model="value"
       />
+      <slot name="inputs" />
+    </div>
 
-      <span v-if="slots.calculated" class="o-statistic__calculated"
-        ><slot name="calculated"
-      /></span>
-    </label>
-  </div>
+    <InputField
+      v-if="slots.calculated"
+      class="o-field o-field--calculated"
+      :size="calculatedSize"
+    >
+      <slot name="calculated" />
+    </InputField>
+  </InputField>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-  name: {
-    type: String,
-    required: true,
-  },
-  min: {
-    type: Number,
-    default: 0,
-  },
-  max: {
-    type: Number,
-    default: null,
-  },
-  disable: {
-    type: Boolean,
-    default: false,
-  },
-  readonly: {
-    type: Boolean,
-    default: false,
-  },
-  modelValue: {
-    type: [Number, String],
-    required: true,
-    validate(value: any) {
-      return !isNaN(value);
-    },
-  },
+import { InputFontSize } from "~/types/html";
+
+export interface Props {
+  name: string;
+  size?: InputFontSize;
+  calculatedSize?: InputFontSize;
+  label?: string;
+  min?: number;
+  step?: number;
+  max?: number;
+  disable?: boolean;
+  readonly?: boolean;
+  modelValue: NumericalString;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  size: "big",
+  calculatedSize: "medium",
+  min: 0,
+  step: 1,
+  disable: false,
+  readonly: false,
 });
 
-defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue"]);
 
 const slots = useSlots();
+
+const classes = computed(() => {
+  const classes = ["o-field--statistic", `is-${props.size}`];
+
+  if (slots.calculated) {
+    classes.push("has-calculated");
+  }
+
+  return classes;
+});
+
+const value = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit("update:modelValue", value);
+  },
+});
 </script>
 
 <style lang="scss">
-.o-statistic {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  padding: 0.5rem;
-  border: 3px ridge var(--fg);
+.o-field {
+  $this: &;
 
-  #{&}__main {
+  &#{$this}--statistic {
+    text-align: center;
     display: flex;
     flex-direction: column;
-  }
+    align-items: center;
 
-  #{&}__title {
-    display: block;
-    margin: 0 auto 0.5rem;
-  }
+    .o-input {
+      @at-root .has-calculated#{&} {
+        padding-bottom: 1.5rem;
+      }
+    }
 
-  #{&}__input {
-    text-align: center;
-    border: 1px solid var(--fg);
-    border-radius: 4px;
-    padding: 0.5rem;
-    font-size: 2rem;
-    background-color: var(--bg);
-    color: var(--fg);
-    width: 200px;
-
-    @at-root .has-calculated#{&} {
-      padding-bottom: 1.5rem;
+    #{$this}__inputs {
+      display: flex;
+      flex-wrap: nowrap;
     }
   }
 
-  #{&}__calculated {
-    border: 1px solid var(--fg);
-    border-radius: 4px;
-    padding: 0.25rem;
-    font-size: 1.5rem;
-    background-color: var(--bg);
-    color: var(--fg);
+  #{$this}--calculated {
     margin: -1rem auto 0;
-    width: auto;
-    min-width: 20%;
   }
 }
 </style>

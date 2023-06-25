@@ -1,96 +1,125 @@
 <template>
   <main>
-    <InputField>
+    <InputField :full-width="true">
       <template #label> Character Name </template>
-      <InputText v-model="name" :name="name" />
+      <TextInput v-model="name" :name="name" />
     </InputField>
 
     <ClientOnly>
       <ol>
         <li>
-          <StatisticField name="level" v-model="level" :min="1"> Level </StatisticField>
+          <StatisticField name="level" label="Level" v-model="level" :min="1" />
         </li>
 
         <li>
-          <StatisticField name="proficiency" v-model="proficiency">
-            Proficiency
-          </StatisticField>
+          <StatisticField name="proficiency" label="Proficiency" v-model="proficiency" />
         </li>
 
         <li>
-          <StatisticField name="hitDie" v-model="hitDiceUsed" :min="0" :max="hitDie">
-            Hit Dice
-            <template #calculated>d{{ hitDie }}</template>
+          <StatisticField
+            name="hitDie"
+            label="Hit Dice"
+            v-model="hitDiceUsed"
+            :min="0"
+            :max="hitDie"
+          >
+            <template #calculated>
+              <TextInput :name="name" :readonly="true" :model-value="`d${hitDie}`" />
+            </template>
           </StatisticField>
         </li>
 
         <li>
           <StatisticField
             name="hitPoints"
+            label="Hit Points"
             v-model="hitPoints"
-            :min="1"
+            :min="-maxHitPoints"
             :max="maxHitPoints"
           >
-            Hit Points
+            <template #calculated>
+              <NumberInput
+                name="maxHitPoints"
+                label="Hit Points"
+                v-model="maxHitPoints"
+                :min="1"
+              />
+            </template>
           </StatisticField>
         </li>
 
-        <li>
-          <StatisticField name="maxHitPoints" v-model="maxHitPoints" :min="1">
-            Hit Points
-          </StatisticField>
-        </li>
+        <li></li>
 
         <li>
-          <StatisticField name="temporaryHitPoints" v-model="temporaryHitPoints" :min="1"
-            >Temporary Hit Points</StatisticField
-          >
+          <StatisticField
+            name="temporaryHitPoints"
+            label="Temporary Hit Points"
+            v-model="temporaryHitPoints"
+            :min="1"
+          />
         </li>
       </ol>
 
       <ol>
         <li>
-          <StatisticField name="initiative" v-model="initiative" :readonly="true">
-            Initiative
-          </StatisticField>
+          <StatisticField
+            name="initiative"
+            label="Initiative"
+            v-model="initiative"
+            :readonly="true"
+          />
         </li>
 
         <li>
-          <StatisticField name="armorClass" v-model="armorClass" :readonly="true">
-            AC
-          </StatisticField>
+          <StatisticField
+            name="armorClass"
+            label="AC"
+            v-model="armorClass"
+            :readonly="true"
+          />
         </li>
 
         <li>
-          <StatisticField name="speed" v-model="speed" :readonly="true">
-            Speed
-            <template #calculated>m</template>
+          <StatisticField name="speed" label="Speed" v-model="speed" :readonly="true">
+            <template #calculated>
+              <TextInput :name="name" :readonly="true" model-value="m" />
+            </template>
           </StatisticField>
         </li>
 
         <li>
           <StatisticField
             name="passivePerception"
+            label="Passive Perception"
             v-model="passivePerception"
             :readonly="true"
-          >
-            Passive Perception
-          </StatisticField>
+          />
         </li>
 
         <li>
-          <StatisticField name="passiveInsight" v-model="passiveInsight" :readonly="true">
-            Passive Insight
-          </StatisticField>
+          <StatisticField
+            name="passiveInsight"
+            label="Passive Insight"
+            v-model="passiveInsight"
+            :readonly="true"
+          />
         </li>
       </ol>
 
       <ol>
         <li v-for="(statisticValue, statistic) in statistics" :key="statistic">
-          <StatisticField :name="statistic" v-model="statistics[statistic]">
-            {{ statistic.toUpperCase() }}
-
-            <template #calculated>{{ calculatedModifier(statistic) }}</template>
+          <StatisticField
+            :name="statistic"
+            :label="statistic"
+            v-model="statistics[statistic]"
+          >
+            <template #calculated>
+              <NumberInput
+                :name="`${statistic}Modifier`"
+                :model-value="calculatedModifier(statistic)"
+                :readonly="true"
+              />
+            </template>
           </StatisticField>
 
           <ol>
@@ -112,7 +141,13 @@
               >
                 {{ skill.toUpperCase() }}
 
-                <template #calculated>{{ calculatedSkill(statistic, skill) }}</template>
+                <template #calculated>
+                  <NumberInput
+                    :name="`${skill}Modifier`"
+                    :model-value="calculatedSkill(statistic, skill)"
+                    :readonly="true"
+                  />
+                </template>
               </CheckboxField>
             </li>
           </ol>
@@ -123,16 +158,18 @@
         <li>
           <StatisticField
             name="spellAttackBonus"
+            label="Spell Attack Bonus"
             v-model="spellAttackBonus"
             :readonly="true"
-          >
-            Spell Attack Bonus
-          </StatisticField>
+          />
         </li>
         <li>
-          <StatisticField name="spellSaveDC" v-model="spellSaveDC" :readonly="true">
-            Spell Save DC
-          </StatisticField>
+          <StatisticField
+            name="spellSaveDC"
+            label="Spell Save DC"
+            v-model="spellSaveDC"
+            :readonly="true"
+          />
         </li>
         <li>
           <ol>
@@ -147,7 +184,7 @@
                 >
                   <template #output>
                     <InputField size="medium">
-                      <InputNumber
+                      <NumberInput
                         :name="`remainingSpellSlotsLevel${level}`"
                         :min="0"
                         :max="spellSlots[level]"
@@ -160,7 +197,7 @@
 
                   <template #max>
                     <InputField size="medium">
-                      <InputNumber
+                      <NumberInput
                         :name="`maxSpellSlotsLevel${level}`"
                         :min="1"
                         :modelValue="spellSlots[level]"
@@ -181,7 +218,7 @@
 <script setup lang="ts">
 import { useCharacterStore } from "@/stores/character";
 import { Statistics } from "~/types/character";
-import { ordinalSuffix } from "../utilities/number";
+import { ordinalSuffix } from "~/utilities/number";
 
 const store = useCharacterStore();
 const {

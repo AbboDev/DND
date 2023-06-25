@@ -1,4 +1,4 @@
-import { DataListRecord } from "~/types/datalist";
+import { DataListRecord } from "~/types/html";
 
 export function isIterable(input: any) {
   if (input === null || input === undefined) {

@@ -6,18 +6,28 @@
 </template>
 
 <script setup lang="ts">
+import { InputFontSize } from "~/types/html";
+
 export interface Props {
-  size?: "big" | "medium" | "normal";
+  size?: InputFontSize;
+  fullWidth?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   size: "normal",
+  fullWidth: false,
 });
 
 const slots = useSlots();
 
 const classes = computed(() => {
-  return [`is-${props.size}`];
+  const classes = [`is-${props.size}`];
+
+  if (props.fullWidth) {
+    classes.push("o-field--full-width");
+  }
+
+  return classes;
 });
 </script>
 
@@ -28,12 +38,14 @@ const classes = computed(() => {
   font-size: 1rem;
   width: auto;
 
-  span {
+  label {
     display: block;
+    font-size: 1rem;
+    margin: 0 auto 0.5rem;
   }
 
   input {
-    width: 100%;
+    width: auto;
     border-radius: 4px;
     padding: 0.5rem;
     border: 1px solid var(--fg);
@@ -41,6 +53,10 @@ const classes = computed(() => {
     color: var(--fg);
     font-size: 1em;
     text-align: inherit;
+
+    @at-root .o-field--full-width#{&} {
+      width: 100%;
+    }
   }
 
   &.is-big {

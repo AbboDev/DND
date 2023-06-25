@@ -2,6 +2,7 @@
   <input
     type="text"
     :name="name"
+    :size="size"
     :disable="disable"
     :readonly="readonly"
     :value="modelValue"
@@ -25,4 +26,14 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 defineEmits(["update:modelValue"]);
+
+const size = computed(() => {
+  const { length } = props.modelValue.toString();
+
+  if (length === 1) {
+    return length;
+  }
+
+  return length - 1;
+});
 </script>

@@ -39,9 +39,8 @@
 </template>
 
 <script setup lang="ts">
-import { DataListRecord } from "~/types/datalist";
+import { DataListRecord } from "~/types/html";
 import { instanceOfDataListRecord } from "~/utilities/typeGuards";
-import { type } from "../.nuxt/types/imports";
 
 export interface Props {
   values: DataListRecord[] | string[] | number[] | number | string;
@@ -146,7 +145,6 @@ const dataListRecords = computed(() => {
   }
 
   #{&}__bar {
-    @debug &;
     display: flex;
     flex-wrap: nowrap;
     justify-content: flex-start;
@@ -224,3 +222,4 @@ const dataListRecords = computed(() => {
   }
 }
 </style>
+~/types/html

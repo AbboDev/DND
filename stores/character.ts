@@ -12,6 +12,7 @@ import {
   CoreClasses,
   ArmourProficiencies,
   WeaponProficiencies,
+  CoreLanguages,
 } from "~/types/character";
 import { Dice } from "~/types/dice";
 import { Alignment } from "~/types/alignments";
@@ -28,6 +29,7 @@ export interface CharacterStore {
   statistics: RemovableRef<Statistics>;
   proficiency: RemovableRef<number>;
   proficiencies: RemovableRef<Skills>;
+  languages: RemovableRef<CoreLanguages>;
   armourProficiencies: RemovableRef<ArmourProficiencies>;
   weaponProficiencies: RemovableRef<WeaponProficiencies>;
 
@@ -126,6 +128,27 @@ export const useCharacterStore = defineStore(
       "spellcastingAbility",
       "intelligence"
     );
+
+    const languages = useLocalStorage<CoreLanguages>("languages", {
+      abyssal: false,
+      celestial: false,
+      common: true,
+      deepSpeech: false,
+      draconic: false,
+      druidic: false,
+      dwarvish: false,
+      elvish: false,
+      giant: false,
+      gnomish: false,
+      goblin: false,
+      halfling: false,
+      infernal: false,
+      orc: false,
+      primordial: false,
+      sylvan: false,
+      thievesCant: false,
+      undercommon: false,
+    });
 
     const statistics = useLocalStorage<Statistics>(
       "statistics",
@@ -306,6 +329,7 @@ export const useCharacterStore = defineStore(
       statistics: skipHydrate(statistics),
       proficiency: skipHydrate(proficiency),
       proficiencies: skipHydrate(proficiencies),
+      languages: skipHydrate(languages),
       armourProficiencies: skipHydrate(armourProficiencies),
       weaponProficiencies: skipHydrate(weaponProficiencies),
       calculatedSkill,

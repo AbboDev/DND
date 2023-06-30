@@ -74,3 +74,24 @@ export enum CoreBackgrounds {
   Soldier = "Soldier",
   Urchin = "Urchin",
 }
+
+export type CoreLanguages = {
+  abyssal: boolean;
+  celestial: boolean;
+  common: boolean;
+  deepSpeech: boolean;
+  draconic: boolean;
+  druidic: boolean;
+  dwarvish: boolean;
+  elvish: boolean;
+  giant: boolean;
+  gnomish: boolean;
+  goblin: boolean;
+  halfling: boolean;
+  infernal: boolean;
+  orc: boolean;
+  primordial: boolean;
+  sylvan: boolean;
+  thievesCant: boolean;
+  undercommon: boolean;
+};

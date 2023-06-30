@@ -190,18 +190,30 @@
       </ol>
 
       <ol>
-        <li v-for="(value, weaponType) in weaponProficiencies" :key="weaponType">
+        <li>
           <CheckboxField
+            v-for="(value, weaponType) in weaponProficiencies"
+            :key="weaponType"
             :name="weaponType"
             :label="`${capitalize(weaponType)} Weapons`"
             v-model="weaponProficiencies[weaponType]"
           />
-        </li>
-        <li v-for="(value, armourType) in armourProficiencies" :key="armourType">
+
           <CheckboxField
+            v-for="(value, armourType) in armourProficiencies"
+            :key="armourType"
             :name="armourType"
             :label="capitalize(armourType) + (armourType !== 'shields' ? ' Armour' : '')"
             v-model="armourProficiencies[armourType]"
+          />
+        </li>
+        <li>
+          <CheckboxField
+            v-for="(value, language) in languages"
+            :key="language"
+            :name="language"
+            :label="capitalize(language)"
+            v-model="languages[language]"
           />
         </li>
       </ol>
@@ -272,7 +284,6 @@ import { useCharacterStore } from "@/stores/character";
 import { Statistics } from "~/types/character";
 import { ordinalSuffix } from "~/utilities/number";
 import { capitalize } from "~/utilities/string";
-import { Proficiencies } from "../types/character";
 
 const store = useCharacterStore();
 const {
@@ -286,6 +297,7 @@ const {
   statistics,
   proficiency,
   proficiencies,
+  languages,
   armourProficiencies,
   weaponProficiencies,
   calculatedSkill,

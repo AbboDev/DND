@@ -10,6 +10,8 @@ import {
   SpellSlotsPerLevel,
   CoreBackgrounds,
   CoreClasses,
+  ArmourProficiencies,
+  WeaponProficiencies,
 } from "~/types/character";
 import { Dice } from "~/types/dice";
 import { Alignment } from "~/types/alignments";
@@ -26,6 +28,8 @@ export interface CharacterStore {
   statistics: RemovableRef<Statistics>;
   proficiency: RemovableRef<number>;
   proficiencies: RemovableRef<Skills>;
+  armourProficiencies: RemovableRef<ArmourProficiencies>;
+  weaponProficiencies: RemovableRef<WeaponProficiencies>;
 
   alignment: RemovableRef<keyof typeof Alignment>;
   characterClass: RemovableRef<keyof CoreClasses>;
@@ -37,9 +41,9 @@ export interface CharacterStore {
   spellSlots: RemovableRef<SpellSlotsPerLevel>;
   spellSlotsUsed: RemovableRef<SpellSlotsPerLevel>;
 
-  baseArmorClass: RemovableRef<number>;
-  shieldArmorClass: RemovableRef<number>;
-  armorClass: globalThis.ComputedRef<number>;
+  baseArmourClass: RemovableRef<number>;
+  shieldArmourClass: RemovableRef<number>;
+  armourClass: globalThis.ComputedRef<number>;
 
   calculatedSkill: globalThis.ComputedRef<
     (statistic: keyof Statistics) => number
@@ -201,17 +205,36 @@ export const useCharacterStore = defineStore(
       },
     });
 
+    const armourProficiencies = useLocalStorage<ArmourProficiencies>(
+      "armourProficiencies",
+      {
+        light: false,
+        medium: false,
+        heavy: false,
+        shields: false,
+      }
+    );
+
+    const weaponProficiencies = useLocalStorage<WeaponProficiencies>(
+      "weaponProficiencies",
+      {
+        simple: false,
+        martial: false,
+        firearms: false,
+      }
+    );
+
     const calculatedModifier = computed(
       () => (statistic: keyof Statistics) =>
         Math.floor(((statistics.value[statistic] || 0) - 10) / 2)
     );
 
-    const baseArmorClass = useLocalStorage<number>("baseArmorClass", 10);
-    const shieldArmorClass = useLocalStorage<number>("shieldArmorClass", 0);
-    const armorClass = computed(
+    const baseArmourClass = useLocalStorage<number>("baseArmourClass", 10);
+    const shieldArmourClass = useLocalStorage<number>("shieldArmourClass", 0);
+    const armourClass = computed(
       () =>
-        baseArmorClass.value +
-        shieldArmorClass.value +
+        baseArmourClass.value +
+        shieldArmourClass.value +
         calculatedModifier.value("dexterity")
     );
 
@@ -283,12 +306,14 @@ export const useCharacterStore = defineStore(
       statistics: skipHydrate(statistics),
       proficiency: skipHydrate(proficiency),
       proficiencies: skipHydrate(proficiencies),
+      armourProficiencies: skipHydrate(armourProficiencies),
+      weaponProficiencies: skipHydrate(weaponProficiencies),
       calculatedSkill,
       calculatedModifier,
       initiative,
-      baseArmorClass: skipHydrate(baseArmorClass),
-      shieldArmorClass: skipHydrate(shieldArmorClass),
-      armorClass,
+      baseArmourClass: skipHydrate(baseArmourClass),
+      shieldArmourClass: skipHydrate(shieldArmourClass),
+      armourClass,
       speed: skipHydrate(speed),
       passivePerception,
       passiveInsight,

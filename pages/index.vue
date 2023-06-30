@@ -97,17 +97,17 @@
 
         <li>
           <StatisticField
-            name="armorClass"
+            name="armourClass"
             label="AC"
-            v-model="armorClass"
+            v-model="armourClass"
             :readonly="true"
           >
             <template #calculated>
               <NumberInput
-                name="shieldArmorClass"
+                name="shieldArmourClass"
                 :min="0"
                 :max="2"
-                v-model="shieldArmorClass"
+                v-model="shieldArmourClass"
               />
             </template>
           </StatisticField>
@@ -190,6 +190,23 @@
       </ol>
 
       <ol>
+        <li v-for="(value, weaponType) in weaponProficiencies" :key="weaponType">
+          <CheckboxField
+            :name="weaponType"
+            :label="`${capitalize(weaponType)} Weapons`"
+            v-model="weaponProficiencies[weaponType]"
+          />
+        </li>
+        <li v-for="(value, armourType) in armourProficiencies" :key="armourType">
+          <CheckboxField
+            :name="armourType"
+            :label="capitalize(armourType) + (armourType !== 'shields' ? ' Armour' : '')"
+            v-model="armourProficiencies[armourType]"
+          />
+        </li>
+      </ol>
+
+      <ol>
         <li>
           <StatisticField
             name="spellAttackBonus"
@@ -255,6 +272,7 @@ import { useCharacterStore } from "@/stores/character";
 import { Statistics } from "~/types/character";
 import { ordinalSuffix } from "~/utilities/number";
 import { capitalize } from "~/utilities/string";
+import { Proficiencies } from "../types/character";
 
 const store = useCharacterStore();
 const {
@@ -268,11 +286,13 @@ const {
   statistics,
   proficiency,
   proficiencies,
+  armourProficiencies,
+  weaponProficiencies,
   calculatedSkill,
   calculatedModifier,
   initiative,
-  armorClass,
-  shieldArmorClass,
+  armourClass,
+  shieldArmourClass,
   speed,
   passivePerception,
   passiveInsight,

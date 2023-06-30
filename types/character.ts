@@ -23,6 +23,21 @@ export type Skills = {
   [P in keyof Statistics]?: Record<string, number>;
 };
 
+export type ArmourProficiencies = {
+  light: boolean;
+  medium: boolean;
+  heavy: boolean;
+  shields: boolean;
+};
+
+export type WeaponProficiencies = {
+  simple: boolean;
+  martial: boolean;
+  firearms: boolean;
+};
+
+export type Proficiencies = ArmourProficiencies & WeaponProficiencies;
+
 export enum CoreClasses {
   Artificer = "Artificer",
   Barbarian = "Barbarian",

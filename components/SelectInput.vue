@@ -19,7 +19,7 @@ import { DataListRecord } from "~/types/html";
 import { instanceOfDataListRecord } from "~/utilities/typeGuards";
 
 export interface Props {
-  values: DataListRecord[] | string[] | number[] | number | string;
+  values: DataListRecord[] | string[] | number[] | number | string | null;
   name: string;
   disable?: boolean;
   readonly?: boolean;
@@ -35,6 +35,11 @@ defineEmits(["update:modelValue"]);
 
 const options = computed(() => {
   const records: DataListRecord[] = [];
+
+  if (props.values === null) {
+    return records;
+  }
+
   let values = parseInt(props.values.toString());
 
   if (!isNaN(values)) {

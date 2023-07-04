@@ -254,15 +254,36 @@ export const useCharacterStore = defineStore(
         Math.floor(((statistics.value[statistic] || 0) - 10) / 2)
     );
 
-    const armourWorn = useLocalStorage<Armour>("armour", null);
+    const armourWorn = useLocalStorage<Armour>("armour", null, {
+      serializer: StorageSerializers.object,
+    });
+
     const baseArmourClass = useLocalStorage<number>("baseArmourClass", 10);
     const shieldArmourClass = useLocalStorage<number>("shieldArmourClass", 0);
-    const armourClass = computed(
-      () =>
-        baseArmourClass.value +
-        shieldArmourClass.value +
-        calculatedModifier.value("dexterity")
-    );
+
+    const armourClass = computed(() => {
+      let value: number = shieldArmourClass.value;
+
+      if (armourWorn.value) {
+        const { ac } = armourWorn.value;
+
+        value += ac.base;
+
+        if (ac.modifier) {
+          let modifier = calculatedModifier.value(ac.modifier);
+
+          if (ac.maxModifier) {
+            modifier = Math.min(modifier, ac.maxModifier);
+          }
+
+          value += modifier;
+        }
+      } else {
+        value += baseArmourClass.value + calculatedModifier.value("dexterity");
+      }
+
+      return value;
+    });
 
     const calculatedSkill = computed(
       () => (statistic: keyof Statistics, skill: string) => {
@@ -307,8 +328,6 @@ export const useCharacterStore = defineStore(
         armourWorn.value = null;
         return
       }
-
-      // TODO: apply relatives effects
 
       armourWorn.value = armour;
     };

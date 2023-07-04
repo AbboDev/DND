@@ -114,9 +114,14 @@
         </li>
 
         <li>
-          <StatisticField name="speed" label="Speed" v-model="speed" :readonly="true">
+          <StatisticField
+            name="speed"
+            label="Speed"
+            :model-value="environment.parseDistanceUnit(speed, DistanceUnit.CELL)"
+            :readonly="true"
+          >
             <template #calculated>
-              <TextInput :name="name" :readonly="true" model-value="m" />
+              <TextInput :name="name" :model-value="environment.unit" :readonly="true" />
             </template>
           </StatisticField>
         </li>
@@ -292,12 +297,15 @@
 
 <script setup lang="ts">
 import { useCharacterStore } from "@/stores/character";
+import { useEnvironmentStore } from "@/stores/environment";
 import { Armour } from "~/types/armour";
 import { Statistics } from "~/types/character";
+import { DistanceUnit } from "~/types/unit";
 import { ordinalSuffix } from "~/utilities/number";
 import { capitalize } from "~/utilities/string";
 
-const store = useCharacterStore();
+const character = useCharacterStore();
+const environment = useEnvironmentStore();
 const {
   name,
   alignment,
@@ -328,7 +336,7 @@ const {
   spellSaveDC,
   spellSlots,
   spellSlotsUsed,
-} = storeToRefs(store);
+} = storeToRefs(character);
 
 const {
   toggleProficiency,
@@ -336,7 +344,7 @@ const {
   updateMaxHitPoints,
   updateLevel,
   applyArmour,
-} = store;
+} = character;
 
 function addProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
   toggleProficiency(statistic, skill, add ? 1 : 0);

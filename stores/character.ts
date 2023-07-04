@@ -56,7 +56,10 @@ export interface CharacterStore {
     (statistic: keyof Statistics, skill: keyof Statistics) => number
   >;
   initiative: globalThis.ComputedRef<number>;
+
+  baseSpeed: RemovableRef<number>;
   speed: globalThis.ComputedRef<number>;
+
   passivePerception: globalThis.ComputedRef<number>;
   passiveInsight: globalThis.ComputedRef<number>;
 
@@ -79,7 +82,30 @@ export const useCharacterStore = defineStore(
     const level = useLocalStorage<number>("level", 1);
     const hitDie = useLocalStorage<Dice>("hitDie", Dice.D8);
     const hitDiceUsed = useLocalStorage<number>("hitDiceUsed", 0);
-    const speed = useLocalStorage<number>("speed", 9);
+
+    const baseSpeed = useLocalStorage<number>("baseSpeed", 6);
+    const speed = computed<number>(() => {
+      let speed: number = baseSpeed.value;
+
+      if (!armourWorn.value) {
+        return speed;
+      }
+
+      if (!armourWorn.value.require) {
+        return speed;
+      }
+
+      for (const [statistic, value] of Object.entries(armourWorn.value.require)) {
+        if (statistics.value[statistic as keyof Statistics]) {
+          if (statistics.value[statistic as keyof Statistics] < value) {
+            speed -= 2;
+            break;
+          }
+        }
+      }
+
+      return speed;
+    });
 
     const characterClass = useLocalStorage<CoreClasses>(
       "class",
@@ -375,7 +401,10 @@ export const useCharacterStore = defineStore(
       calculatedSkill,
       calculatedModifier,
       initiative,
-      speed: skipHydrate(speed),
+
+      baseSpeed: skipHydrate(baseSpeed),
+      speed,
+
       passivePerception,
       passiveInsight,
       hitPoints: skipHydrate(hitPoints),

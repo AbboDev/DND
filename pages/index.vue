@@ -276,11 +276,23 @@
         </li>
       </ol>
     </ClientOnly>
+
+    <ol>
+      <li>
+        <ArmourField
+          name="armour"
+          size="normal"
+          :model-value="armourWorn?.id"
+          @update:model-value="(armour) => fetchArmour(armour)"
+        />
+      </li>
+    </ol>
   </main>
 </template>
 
 <script setup lang="ts">
 import { useCharacterStore } from "@/stores/character";
+import { Armour } from "~/types/armour";
 import { Statistics } from "~/types/character";
 import { ordinalSuffix } from "~/utilities/number";
 import { capitalize } from "~/utilities/string";
@@ -298,6 +310,7 @@ const {
   proficiency,
   proficiencies,
   languages,
+  armourWorn,
   armourProficiencies,
   weaponProficiencies,
   calculatedSkill,
@@ -317,7 +330,13 @@ const {
   spellSlotsUsed,
 } = storeToRefs(store);
 
-const { toggleProficiency, updateSpellSlots, updateMaxHitPoints, updateLevel } = store;
+const {
+  toggleProficiency,
+  updateSpellSlots,
+  updateMaxHitPoints,
+  updateLevel,
+  applyArmour,
+} = store;
 
 function addProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
   toggleProficiency(statistic, skill, add ? 1 : 0);
@@ -325,6 +344,16 @@ function addProficiency(add: boolean, statistic: keyof Statistics, skill: string
 
 function addDoubleProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
   toggleProficiency(statistic, skill, add ? 2 : 1);
+}
+
+async function fetchArmour(armour: string) {
+  try {
+    let chooseArmour: Armour = await $fetch(`/api/armour/${armour}`);
+
+    applyArmour(chooseArmour);
+  } catch (error) {
+    console.error(error);
+  }
 }
 </script>
 

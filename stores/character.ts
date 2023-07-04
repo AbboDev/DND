@@ -16,6 +16,7 @@ import {
 } from "~/types/character";
 import { Dice } from "~/types/dice";
 import { Alignment } from "~/types/alignments";
+import { Armour } from "~/types/armour";
 
 export interface CharacterStore {
   name: RemovableRef<string>;
@@ -43,6 +44,7 @@ export interface CharacterStore {
   spellSlots: RemovableRef<SpellSlotsPerLevel>;
   spellSlotsUsed: RemovableRef<SpellSlotsPerLevel>;
 
+  armourWorn: RemovableRef<Armour>;
   baseArmourClass: RemovableRef<number>;
   shieldArmourClass: RemovableRef<number>;
   armourClass: globalThis.ComputedRef<number>;
@@ -252,6 +254,7 @@ export const useCharacterStore = defineStore(
         Math.floor(((statistics.value[statistic] || 0) - 10) / 2)
     );
 
+    const armourWorn = useLocalStorage<Armour>("armour", null);
     const baseArmourClass = useLocalStorage<number>("baseArmourClass", 10);
     const shieldArmourClass = useLocalStorage<number>("shieldArmourClass", 0);
     const armourClass = computed(
@@ -299,6 +302,17 @@ export const useCharacterStore = defineStore(
       }
     };
 
+    const applyArmour = (armour: Armour | null): void => {
+      if (!armour) {
+        armourWorn.value = null;
+        return
+      }
+
+      // TODO: apply relatives effects
+
+      armourWorn.value = armour;
+    };
+
     const toggleProficiency = (
       statistic: keyof Statistics,
       skill: string,
@@ -330,14 +344,18 @@ export const useCharacterStore = defineStore(
       proficiency: skipHydrate(proficiency),
       proficiencies: skipHydrate(proficiencies),
       languages: skipHydrate(languages),
+
+      armourWorn: skipHydrate(armourWorn),
       armourProficiencies: skipHydrate(armourProficiencies),
+      baseArmourClass: skipHydrate(baseArmourClass),
+      shieldArmourClass: skipHydrate(shieldArmourClass),
+      armourClass,
+      applyArmour,
+
       weaponProficiencies: skipHydrate(weaponProficiencies),
       calculatedSkill,
       calculatedModifier,
       initiative,
-      baseArmourClass: skipHydrate(baseArmourClass),
-      shieldArmourClass: skipHydrate(shieldArmourClass),
-      armourClass,
       speed: skipHydrate(speed),
       passivePerception,
       passiveInsight,

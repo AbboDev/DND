@@ -114,9 +114,14 @@
         </li>
 
         <li>
-          <StatisticField name="speed" label="Speed" v-model="speed" :readonly="true">
+          <StatisticField
+            name="speed"
+            label="Speed"
+            :model-value="environment.parseDistanceUnit(speed, DistanceUnit.CELL)"
+            :readonly="true"
+          >
             <template #calculated>
-              <TextInput :name="name" :readonly="true" model-value="m" />
+              <TextInput :name="name" :model-value="environment.unit" :readonly="true" />
             </template>
           </StatisticField>
         </li>
@@ -276,16 +281,31 @@
         </li>
       </ol>
     </ClientOnly>
+
+    <ol>
+      <li>
+        <ArmourField
+          name="armour"
+          size="normal"
+          :model-value="armourWorn?.id"
+          @update:model-value="(armour) => fetchArmour(armour)"
+        />
+      </li>
+    </ol>
   </main>
 </template>
 
 <script setup lang="ts">
 import { useCharacterStore } from "@/stores/character";
+import { useEnvironmentStore } from "@/stores/environment";
+import { Armour } from "~/types/armour";
 import { Statistics } from "~/types/character";
+import { DistanceUnit } from "~/types/unit";
 import { ordinalSuffix } from "~/utilities/number";
 import { capitalize } from "~/utilities/string";
 
-const store = useCharacterStore();
+const character = useCharacterStore();
+const environment = useEnvironmentStore();
 const {
   name,
   alignment,
@@ -298,6 +318,7 @@ const {
   proficiency,
   proficiencies,
   languages,
+  armourWorn,
   armourProficiencies,
   weaponProficiencies,
   calculatedSkill,
@@ -315,9 +336,15 @@ const {
   spellSaveDC,
   spellSlots,
   spellSlotsUsed,
-} = storeToRefs(store);
+} = storeToRefs(character);
 
-const { toggleProficiency, updateSpellSlots, updateMaxHitPoints, updateLevel } = store;
+const {
+  toggleProficiency,
+  updateSpellSlots,
+  updateMaxHitPoints,
+  updateLevel,
+  applyArmour,
+} = character;
 
 function addProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
   toggleProficiency(statistic, skill, add ? 1 : 0);
@@ -325,6 +352,16 @@ function addProficiency(add: boolean, statistic: keyof Statistics, skill: string
 
 function addDoubleProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
   toggleProficiency(statistic, skill, add ? 2 : 1);
+}
+
+async function fetchArmour(armour: string) {
+  try {
+    let chooseArmour: Armour = await $fetch(`/api/armour/${armour}`);
+
+    applyArmour(chooseArmour);
+  } catch (error) {
+    console.error(error);
+  }
 }
 </script>
 

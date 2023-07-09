@@ -16,6 +16,7 @@ import {
 } from "~/types/character";
 import { Dice } from "~/types/dice";
 import { Alignment } from "~/types/alignments";
+import { Armour } from "~/types/armour";
 
 export interface CharacterStore {
   name: RemovableRef<string>;
@@ -43,6 +44,7 @@ export interface CharacterStore {
   spellSlots: RemovableRef<SpellSlotsPerLevel>;
   spellSlotsUsed: RemovableRef<SpellSlotsPerLevel>;
 
+  armourWorn: RemovableRef<Armour>;
   baseArmourClass: RemovableRef<number>;
   shieldArmourClass: RemovableRef<number>;
   armourClass: globalThis.ComputedRef<number>;
@@ -54,7 +56,10 @@ export interface CharacterStore {
     (statistic: keyof Statistics, skill: keyof Statistics) => number
   >;
   initiative: globalThis.ComputedRef<number>;
+
+  baseSpeed: RemovableRef<number>;
   speed: globalThis.ComputedRef<number>;
+
   passivePerception: globalThis.ComputedRef<number>;
   passiveInsight: globalThis.ComputedRef<number>;
 
@@ -77,7 +82,30 @@ export const useCharacterStore = defineStore(
     const level = useLocalStorage<number>("level", 1);
     const hitDie = useLocalStorage<Dice>("hitDie", Dice.D8);
     const hitDiceUsed = useLocalStorage<number>("hitDiceUsed", 0);
-    const speed = useLocalStorage<number>("speed", 9);
+
+    const baseSpeed = useLocalStorage<number>("baseSpeed", 6);
+    const speed = computed<number>(() => {
+      let speed: number = baseSpeed.value;
+
+      if (!armourWorn.value) {
+        return speed;
+      }
+
+      if (!armourWorn.value.require) {
+        return speed;
+      }
+
+      for (const [statistic, value] of Object.entries(armourWorn.value.require)) {
+        if (statistics.value[statistic as keyof Statistics]) {
+          if (statistics.value[statistic as keyof Statistics] < value) {
+            speed -= 2;
+            break;
+          }
+        }
+      }
+
+      return speed;
+    });
 
     const characterClass = useLocalStorage<CoreClasses>(
       "class",
@@ -252,14 +280,36 @@ export const useCharacterStore = defineStore(
         Math.floor(((statistics.value[statistic] || 0) - 10) / 2)
     );
 
+    const armourWorn = useLocalStorage<Armour>("armour", null, {
+      serializer: StorageSerializers.object,
+    });
+
     const baseArmourClass = useLocalStorage<number>("baseArmourClass", 10);
     const shieldArmourClass = useLocalStorage<number>("shieldArmourClass", 0);
-    const armourClass = computed(
-      () =>
-        baseArmourClass.value +
-        shieldArmourClass.value +
-        calculatedModifier.value("dexterity")
-    );
+
+    const armourClass = computed(() => {
+      let value: number = shieldArmourClass.value;
+
+      if (armourWorn.value) {
+        const { ac } = armourWorn.value;
+
+        value += ac.base;
+
+        if (ac.modifier) {
+          let modifier = calculatedModifier.value(ac.modifier);
+
+          if (ac.maxModifier) {
+            modifier = Math.min(modifier, ac.maxModifier);
+          }
+
+          value += modifier;
+        }
+      } else {
+        value += baseArmourClass.value + calculatedModifier.value("dexterity");
+      }
+
+      return value;
+    });
 
     const calculatedSkill = computed(
       () => (statistic: keyof Statistics, skill: string) => {
@@ -299,6 +349,15 @@ export const useCharacterStore = defineStore(
       }
     };
 
+    const applyArmour = (armour: Armour | null): void => {
+      if (!armour) {
+        armourWorn.value = null;
+        return
+      }
+
+      armourWorn.value = armour;
+    };
+
     const toggleProficiency = (
       statistic: keyof Statistics,
       skill: string,
@@ -330,15 +389,22 @@ export const useCharacterStore = defineStore(
       proficiency: skipHydrate(proficiency),
       proficiencies: skipHydrate(proficiencies),
       languages: skipHydrate(languages),
+
+      armourWorn: skipHydrate(armourWorn),
       armourProficiencies: skipHydrate(armourProficiencies),
+      baseArmourClass: skipHydrate(baseArmourClass),
+      shieldArmourClass: skipHydrate(shieldArmourClass),
+      armourClass,
+      applyArmour,
+
       weaponProficiencies: skipHydrate(weaponProficiencies),
       calculatedSkill,
       calculatedModifier,
       initiative,
-      baseArmourClass: skipHydrate(baseArmourClass),
-      shieldArmourClass: skipHydrate(shieldArmourClass),
-      armourClass,
-      speed: skipHydrate(speed),
+
+      baseSpeed: skipHydrate(baseSpeed),
+      speed,
+
       passivePerception,
       passiveInsight,
       hitPoints: skipHydrate(hitPoints),

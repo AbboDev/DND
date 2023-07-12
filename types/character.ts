@@ -143,4 +143,8 @@ export type CoreLanguages = {
   sylvan: boolean;
   thievesCant: boolean;
   undercommon: boolean;
+  aquan: boolean;
+  auran: boolean;
+  ignan: boolean;
+  terran: boolean;
 };

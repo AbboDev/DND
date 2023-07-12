@@ -29,7 +29,7 @@ export interface Props {
   label?: string;
   disable?: boolean;
   readonly?: boolean;
-  modelValue: string | number;
+  modelValue: Armour | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -44,7 +44,7 @@ const slots = useSlots();
 
 const value = computed({
   get() {
-    return props.modelValue;
+    return props.modelValue?.id || null;
   },
   set(value) {
     emit("update:modelValue", value);

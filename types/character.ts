@@ -1,3 +1,40 @@
+import { Alignment } from "./alignments";
+import { Armour } from "./armour";
+import { Dice } from "./dice";
+
+export interface Character {
+  name: string;
+  level: number;
+
+  hitPoints: number;
+  temporaryHitPoints: number;
+  maxHitPoints: number;
+
+  hitDiceUsed: number;
+  hitDie: Dice;
+
+  statistics: Statistics;
+  proficiency: number;
+  proficiencies: AbilitySkills;
+  languages: CoreLanguages;
+  armourProficiencies: ArmourProficiencies;
+  weaponProficiencies: WeaponProficiencies;
+
+  class: CoreClasses;
+  background: CoreBackgrounds;
+  alignment: keyof typeof Alignment;
+
+  spellcastingAbility: keyof Statistics;
+  spellSlots: SpellSlotsPerLevel;
+  spellSlotsUsed: SpellSlotsPerLevel;
+
+  armour: Armour | null;
+  baseArmourClass: number;
+  shieldArmourClass: number;
+
+  baseSpeed: number;
+}
+
 export type Statistics = {
   strength: number;
   dexterity: number;
@@ -88,40 +125,40 @@ export type WeaponProficiencies = {
 export type Proficiencies = ArmourProficiencies & WeaponProficiencies;
 
 export enum CoreClasses {
-  Artificer = "Artificer",
-  Barbarian = "Barbarian",
-  Bard = "Bard",
-  Cleric = "Cleric",
-  Druid = "Druid",
-  Fighter = "Fighter",
-  Monk = "Monk",
-  Paladin = "Paladin",
-  Ranger = "Ranger",
-  Rogue = "Rogue",
-  Sorcerer = "Sorcerer",
-  Warlock = "Warlock",
-  Wizard = "Wizard",
+  ARTIFICER = "Artificer",
+  BARBARIAN = "Barbarian",
+  BARD = "Bard",
+  CLERIC = "Cleric",
+  DRUID = "Druid",
+  FIGHTER = "Fighter",
+  MONK = "Monk",
+  PALADIN = "Paladin",
+  RANGER = "Ranger",
+  ROGUE = "Rogue",
+  SORCERER = "Sorcerer",
+  WARLOCK = "Warlock",
+  WIZARD = "Wizard",
 }
 
 export enum CoreBackgrounds {
-  Acolyte = "Acolyte",
-  Charlatan = "Charlatan",
-  Criminal = "Criminal / Spy",
-  Spy = CoreBackgrounds.Criminal,
-  Entertainer = "Entertainer",
-  FolkHero = "Folk Hero",
-  Gladiator = "Gladiator",
-  Artisan = "Guild Artisan / Guild Merchant",
-  Merchant = CoreBackgrounds.Artisan,
-  Hermit = "Hermit",
-  Knight = "Knight",
-  Noble = "Noble",
-  Outlander = "Outlander",
-  Pirate = "Pirate",
-  Sage = "Sage",
-  Sailor = "Sailor",
-  Soldier = "Soldier",
-  Urchin = "Urchin",
+  ACOLYTE = "Acolyte",
+  CHARLATAN = "Charlatan",
+  CRIMINAL = "Criminal / Spy",
+  SPY = CoreBackgrounds.CRIMINAL,
+  ENTERTAINER = "Entertainer",
+  FOLKHERO = "Folk Hero",
+  GLADIATOR = "Gladiator",
+  ARTISAN = "Guild Artisan / Guild Merchant",
+  MERCHANT = CoreBackgrounds.ARTISAN,
+  HERMIT = "Hermit",
+  KNIGHT = "Knight",
+  NOBLE = "Noble",
+  OUTLANDER = "Outlander",
+  PIRATE = "Pirate",
+  SAGE = "Sage",
+  SAILOR = "Sailor",
+  SOLDIER = "Soldier",
+  URCHIN = "Urchin",
 }
 
 export type CoreLanguages = {

@@ -1,293 +1,310 @@
 <template>
   <main>
-    <ClientOnly>
-      <InputField :full-width="true">
-        <template #label> Character Name </template>
-        <TextInput v-model="name" name="name" />
-      </InputField>
+    <InputField :full-width="true">
+      <template #label> Character Name </template>
+      <TextInput v-model="character.name" name="name" />
+    </InputField>
 
-      <ol>
-        <li>
-          <AlignmentField name="alignment" size="normal" v-model="alignment">
-            <template #label> Alignment </template>
-          </AlignmentField>
-        </li>
-        <li>
-          <ClassField name="class" size="normal" v-model="characterClass">
-            <template #label> Class </template>
-          </ClassField>
-        </li>
-        <li>
-          <BackgroundField name="background" size="normal" v-model="background">
-            <template #label> Background </template>
-          </BackgroundField>
-        </li>
-      </ol>
+    <ol>
+      <li>
+        <AlignmentField name="alignment" size="normal" v-model="character.alignment">
+          <template #label> Alignment </template>
+        </AlignmentField>
+      </li>
+      <li>
+        <ClassField name="class" size="normal" v-model="character.class">
+          <template #label> Class </template>
+        </ClassField>
+      </li>
+      <li>
+        <BackgroundField name="background" size="normal" v-model="character.background">
+          <template #label> Background </template>
+        </BackgroundField>
+      </li>
+    </ol>
 
-      <ol>
-        <li>
-          <StatisticField
-            name="level"
-            label="Level"
-            :min="1"
-            :model-value="level"
-            @update:model-value="(level) => updateLevel(level)"
-          />
-        </li>
+    <ol>
+      <li>
+        <StatisticField
+          name="level"
+          label="Level"
+          :min="1"
+          :model-value="character.level"
+          @update:model-value="(level) => updateLevel(level)"
+        />
+      </li>
 
-        <li>
-          <StatisticField name="proficiency" label="Proficiency" v-model="proficiency" />
-        </li>
+      <li>
+        <StatisticField
+          name="proficiency"
+          label="Proficiency"
+          v-model="character.proficiency"
+        />
+      </li>
 
-        <li>
-          <StatisticField
-            name="hitDie"
-            label="Hit Dice"
-            v-model="hitDiceUsed"
-            :min="0"
-            :max="level"
+      <li>
+        <StatisticField
+          name="hitDiceUsed"
+          label="Hit Dice"
+          v-model="character.hitDiceUsed"
+          :min="0"
+          :max="character.level"
+        >
+          <template #calculated>
+            <TextInput
+              name="hitDie"
+              :readonly="true"
+              :model-value="`d${character.hitDie}`"
+            />
+          </template>
+        </StatisticField>
+      </li>
+
+      <li>
+        <StatisticField
+          name="hitPoints"
+          label="Hit Points"
+          v-model="character.hitPoints"
+          :min="-character.maxHitPoints"
+          :max="character.maxHitPoints"
+        >
+          <template #calculated>
+            <NumberInput
+              name="maxHitPoints"
+              label="Hit Points"
+              :min="0"
+              :model-value="character.maxHitPoints"
+              @update:model-value="(hp) => updateMaxHitPoints(hp)"
+            />
+          </template>
+        </StatisticField>
+      </li>
+
+      <li></li>
+
+      <li>
+        <StatisticField
+          name="temporaryHitPoints"
+          label="Temporary Hit Points"
+          v-model="character.temporaryHitPoints"
+          :min="1"
+        />
+      </li>
+    </ol>
+
+    <ol>
+      <li>
+        <StatisticField
+          name="initiative"
+          label="Initiative"
+          v-model="initiative"
+          :readonly="true"
+        />
+      </li>
+
+      <li>
+        <StatisticField
+          name="armourClass"
+          label="AC"
+          v-model="armourClass"
+          :readonly="true"
+        >
+          <template #calculated>
+            <NumberInput
+              name="shieldArmourClass"
+              :min="0"
+              :max="2"
+              v-model="character.shieldArmourClass"
+            />
+          </template>
+        </StatisticField>
+      </li>
+
+      <li>
+        <StatisticField
+          name="speed"
+          label="Speed"
+          :model-value="environmentStore.parseDistanceUnit(speed, DistanceUnit.CELL)"
+          :readonly="true"
+        >
+          <template #calculated>
+            <TextInput
+              name="speedUnit"
+              :model-value="environmentStore.unit"
+              :readonly="true"
+            />
+          </template>
+        </StatisticField>
+      </li>
+
+      <li>
+        <StatisticField
+          name="passivePerception"
+          label="Passive Perception"
+          v-model="passivePerception"
+          :readonly="true"
+        />
+      </li>
+
+      <li>
+        <StatisticField
+          name="passiveInsight"
+          label="Passive Insight"
+          v-model="passiveInsight"
+          :readonly="true"
+        />
+      </li>
+    </ol>
+
+    <ol>
+      <li v-for="(_, statistic) in character.statistics" :key="statistic">
+        <StatisticField
+          :name="statistic"
+          :label="capitalize(statistic)"
+          v-model="character.statistics[statistic]"
+        >
+          <template #calculated>
+            <NumberInput
+              :name="`${statistic}Modifier`"
+              :model-value="calculatedModifier(statistic)"
+              :readonly="true"
+            />
+          </template>
+        </StatisticField>
+
+        <ol>
+          <li
+            v-for="(__, skill) in character.proficiencies[statistic]"
+            :key="skill"
           >
-            <template #calculated>
-              <TextInput :name="name" :readonly="true" :model-value="`d${hitDie}`" />
-            </template>
-          </StatisticField>
-        </li>
-
-        <li>
-          <StatisticField
-            name="hitPoints"
-            label="Hit Points"
-            v-model="hitPoints"
-            :min="-maxHitPoints"
-            :max="maxHitPoints"
-          >
-            <template #calculated>
-              <NumberInput
-                name="maxHitPoints"
-                label="Hit Points"
-                :min="0"
-                :model-value="maxHitPoints"
-                @update:model-value="(hp) => updateMaxHitPoints(hp)"
-              />
-            </template>
-          </StatisticField>
-        </li>
-
-        <li></li>
-
-        <li>
-          <StatisticField
-            name="temporaryHitPoints"
-            label="Temporary Hit Points"
-            v-model="temporaryHitPoints"
-            :min="1"
-          />
-        </li>
-      </ol>
-
-      <ol>
-        <li>
-          <StatisticField
-            name="initiative"
-            label="Initiative"
-            v-model="initiative"
-            :readonly="true"
-          />
-        </li>
-
-        <li>
-          <StatisticField
-            name="armourClass"
-            label="AC"
-            v-model="armourClass"
-            :readonly="true"
-          >
-            <template #calculated>
-              <NumberInput
-                name="shieldArmourClass"
-                :min="0"
-                :max="2"
-                v-model="shieldArmourClass"
-              />
-            </template>
-          </StatisticField>
-        </li>
-
-        <li>
-          <StatisticField
-            name="speed"
-            label="Speed"
-            :model-value="environment.parseDistanceUnit(speed, DistanceUnit.CELL)"
-            :readonly="true"
-          >
-            <template #calculated>
-              <TextInput :name="name" :model-value="environment.unit" :readonly="true" />
-            </template>
-          </StatisticField>
-        </li>
-
-        <li>
-          <StatisticField
-            name="passivePerception"
-            label="Passive Perception"
-            v-model="passivePerception"
-            :readonly="true"
-          />
-        </li>
-
-        <li>
-          <StatisticField
-            name="passiveInsight"
-            label="Passive Insight"
-            v-model="passiveInsight"
-            :readonly="true"
-          />
-        </li>
-      </ol>
-
-      <ol>
-        <li v-for="(statisticValue, statistic) in statistics" :key="statistic">
-          <StatisticField
-            :name="statistic"
-            :label="capitalize(statistic)"
-            v-model="statistics[statistic]"
-          >
-            <template #calculated>
-              <NumberInput
-                :name="`${statistic}Modifier`"
-                :model-value="calculatedModifier(statistic)"
-                :readonly="true"
-              />
-            </template>
-          </StatisticField>
-
-          <ol>
-            <li v-for="(skillValue, skill) in proficiencies[statistic]" :key="skill">
-              <CheckboxField
-                :name="`${statistic}${capitalize(skill)}`"
-                :label="capitalize(skill)"
-                :model-value="(proficiencies[statistic]?.[skill] || 0) > 0"
-                @update:model-value="(event: boolean) => addProficiency(event, statistic, skill)"
-              >
-                <template #inputs v-if="skill !== 'savingThrows'">
-                  <Transition>
-                    <CheckboxInput
-                      v-if="proficiencies[statistic]?.[skill]"
-                      class="is-absolute"
-                      :name="skill"
-                      :model-value="(proficiencies[statistic]?.[skill] || 0) > 1"
-                      @update:model-value="(event: boolean) => addDoubleProficiency(event, statistic, skill)"
-                    />
-                  </Transition>
-                </template>
-
-                <template #calculated>
-                  <NumberInput
-                    :name="`${statistic}${capitalize(skill)}Modifier`"
-                    :model-value="calculatedSkill(statistic, skill)"
-                    :readonly="true"
+            <CheckboxField
+              :name="`${statistic}${capitalize(skill)}`"
+              :label="capitalize(skill)"
+              :model-value="(character.proficiencies[statistic]?.[skill] || 0) > 0"
+              @update:model-value="(event: boolean) => addProficiency(event, statistic, skill)"
+            >
+              <template #inputs v-if="skill !== 'savingThrows'">
+                <Transition>
+                  <CheckboxInput
+                    v-if="character.proficiencies[statistic]?.[skill]"
+                    class="is-absolute"
+                    :name="skill"
+                    :model-value="(character.proficiencies[statistic]?.[skill] || 0) > 1"
+                    @update:model-value="(event: boolean) => addDoubleProficiency(event, statistic, skill)"
                   />
+                </Transition>
+              </template>
+
+              <template #calculated>
+                <NumberInput
+                  :name="`${statistic}${capitalize(skill)}Modifier`"
+                  :model-value="calculatedSkill(statistic, skill)"
+                  :readonly="true"
+                />
+              </template>
+            </CheckboxField>
+          </li>
+        </ol>
+      </li>
+    </ol>
+
+    <ol>
+      <li>
+        <CheckboxField
+          v-for="(value, weaponType) in character.weaponProficiencies"
+          :key="weaponType"
+          :name="weaponType"
+          :label="`${capitalize(weaponType)} Weapons`"
+          v-model="character.weaponProficiencies[weaponType]"
+        />
+
+        <CheckboxField
+          v-for="(value, armourType) in character.armourProficiencies"
+          :key="armourType"
+          :name="armourType"
+          :label="
+            capitalize(armourType) + (armourType !== 'shields' ? ' Armour' : '')
+          "
+          v-model="character.armourProficiencies[armourType]"
+        />
+      </li>
+      <li>
+        <CheckboxField
+          v-for="(value, language) in character.languages"
+          :key="language"
+          :name="language"
+          :label="capitalize(language)"
+          v-model="character.languages[language]"
+        />
+      </li>
+    </ol>
+
+    <ol>
+      <li>
+        <StatisticField
+          name="spellAttackBonus"
+          label="Spell Attack Bonus"
+          v-model="spellAttackBonus"
+          :readonly="true"
+        />
+      </li>
+      <li>
+        <StatisticField
+          name="spellSaveDC"
+          label="Spell Save DC"
+          v-model="spellSaveDC"
+          :readonly="true"
+        />
+      </li>
+      <li>
+        <ol>
+          <template v-for="(slots, level) in character.spellSlots">
+            <li v-if="slots > 0" :key="level">
+              <RangeField
+                :name="`usedSpellSlotsLevel${level}`"
+                :min="0"
+                :max="slots"
+                v-model="character.spellSlotsUsed[level]"
+                :values="slots"
+              >
+                <template #output>
+                  <InputField size="medium">
+                    <NumberInput
+                      :name="`remainingSpellSlotsLevel${level}`"
+                      :min="0"
+                      :max="character.spellSlots[level]"
+                      v-model="character.spellSlotsUsed[level]"
+                    />
+                  </InputField>
                 </template>
-              </CheckboxField>
+
+                {{ ordinalSuffix(level) }} Spell Slots
+
+                <template #max>
+                  <InputField size="medium">
+                    <NumberInput
+                      :name="`maxSpellSlotsLevel${level}`"
+                      :min="1"
+                      :modelValue="character.spellSlots[level]"
+                      @update:model-value="
+                        (slot) => updateSpellSlots(level, slot)
+                      "
+                    />
+                  </InputField>
+                </template>
+              </RangeField>
             </li>
-          </ol>
-        </li>
-      </ol>
-
-      <ol>
-        <li>
-          <CheckboxField
-            v-for="(value, weaponType) in weaponProficiencies"
-            :key="weaponType"
-            :name="weaponType"
-            :label="`${capitalize(weaponType)} Weapons`"
-            v-model="weaponProficiencies[weaponType]"
-          />
-
-          <CheckboxField
-            v-for="(value, armourType) in armourProficiencies"
-            :key="armourType"
-            :name="armourType"
-            :label="capitalize(armourType) + (armourType !== 'shields' ? ' Armour' : '')"
-            v-model="armourProficiencies[armourType]"
-          />
-        </li>
-        <li>
-          <CheckboxField
-            v-for="(value, language) in languages"
-            :key="language"
-            :name="language"
-            :label="capitalize(language)"
-            v-model="languages[language]"
-          />
-        </li>
-      </ol>
-
-      <ol>
-        <li>
-          <StatisticField
-            name="spellAttackBonus"
-            label="Spell Attack Bonus"
-            v-model="spellAttackBonus"
-            :readonly="true"
-          />
-        </li>
-        <li>
-          <StatisticField
-            name="spellSaveDC"
-            label="Spell Save DC"
-            v-model="spellSaveDC"
-            :readonly="true"
-          />
-        </li>
-        <li>
-          <ol>
-            <template v-for="(slots, level) in spellSlots">
-              <li v-if="slots > 0" :key="level">
-                <RangeField
-                  :name="`usedSpellSlotsLevel${level}`"
-                  :min="0"
-                  :max="slots"
-                  v-model="spellSlotsUsed[level]"
-                  :values="slots"
-                >
-                  <template #output>
-                    <InputField size="medium">
-                      <NumberInput
-                        :name="`remainingSpellSlotsLevel${level}`"
-                        :min="0"
-                        :max="spellSlots[level]"
-                        v-model="spellSlotsUsed[level]"
-                      />
-                    </InputField>
-                  </template>
-
-                  {{ ordinalSuffix(level) }} Spell Slots
-
-                  <template #max>
-                    <InputField size="medium">
-                      <NumberInput
-                        :name="`maxSpellSlotsLevel${level}`"
-                        :min="1"
-                        :modelValue="spellSlots[level]"
-                        @update:model-value="(slot) => updateSpellSlots(level, slot)"
-                      />
-                    </InputField>
-                  </template>
-                </RangeField>
-              </li>
-            </template>
-          </ol>
-        </li>
-      </ol>
-    </ClientOnly>
+          </template>
+        </ol>
+      </li>
+    </ol>
 
     <ol>
       <li>
         <ArmourField
           name="armour"
           size="normal"
-          :model-value="armourWorn?.id"
+          :model-value="character.armour"
           @update:model-value="(armour) => fetchArmour(armour)"
         />
       </li>
@@ -304,39 +321,24 @@ import { DistanceUnit } from "~/types/unit";
 import { ordinalSuffix } from "~/utilities/number";
 import { capitalize } from "~/utilities/string";
 
-const character = useCharacterStore();
-const environment = useEnvironmentStore();
+const characterStore = useCharacterStore();
+const environmentStore = useEnvironmentStore();
 const {
-  name,
-  alignment,
-  characterClass,
-  background,
-  level,
-  hitDie,
-  hitDiceUsed,
-  statistics,
-  proficiency,
-  proficiencies,
-  languages,
-  armourWorn,
-  armourProficiencies,
-  weaponProficiencies,
-  calculatedSkill,
-  calculatedModifier,
-  initiative,
-  armourClass,
-  shieldArmourClass,
+  character,
+
   speed,
+  calculatedModifier,
+  calculatedSkill,
+
+  armourClass,
+  initiative,
+
   passivePerception,
   passiveInsight,
-  hitPoints,
-  temporaryHitPoints,
-  maxHitPoints,
+
   spellAttackBonus,
   spellSaveDC,
-  spellSlots,
-  spellSlotsUsed,
-} = storeToRefs(character);
+} = storeToRefs(characterStore);
 
 const {
   toggleProficiency,
@@ -344,13 +346,21 @@ const {
   updateMaxHitPoints,
   updateLevel,
   applyArmour,
-} = character;
+} = characterStore;
 
-function addProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
+function addProficiency(
+  add: boolean,
+  statistic: keyof Statistics,
+  skill: string
+) {
   toggleProficiency(statistic, skill, add ? 1 : 0);
 }
 
-function addDoubleProficiency(add: boolean, statistic: keyof Statistics, skill: string) {
+function addDoubleProficiency(
+  add: boolean,
+  statistic: keyof Statistics,
+  skill: string
+) {
   toggleProficiency(statistic, skill, add ? 2 : 1);
 }
 

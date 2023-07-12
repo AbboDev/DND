@@ -30,7 +30,7 @@
           label="Level"
           :min="1"
           :model-value="character.level"
-          @update:model-value="(level) => updateLevel(level)"
+          @update:model-value="(level: number) => updateLevel(level)"
         />
       </li>
 
@@ -74,7 +74,7 @@
               label="Hit Points"
               :min="0"
               :model-value="character.maxHitPoints"
-              @update:model-value="(hp) => updateMaxHitPoints(hp)"
+              @update:model-value="(hp: number) => updateMaxHitPoints(hp)"
             />
           </template>
         </StatisticField>
@@ -173,15 +173,12 @@
         </StatisticField>
 
         <ol>
-          <li
-            v-for="(__, skill) in character.proficiencies[statistic]"
-            :key="skill"
-          >
+          <li v-for="(__, skill) in character.proficiencies[statistic]" :key="skill">
             <CheckboxField
               :name="`${statistic}${capitalize(skill)}`"
               :label="capitalize(skill)"
               :model-value="(character.proficiencies[statistic]?.[skill] || 0) > 0"
-              @update:model-value="(event: boolean) => addProficiency(event, statistic, skill)"
+              @update:model-value="(event: boolean) => addProficiency(event, statistic, skill as keyof Skills)"
             >
               <template #inputs v-if="skill !== 'savingThrows'">
                 <Transition>
@@ -190,7 +187,7 @@
                     class="is-absolute"
                     :name="skill"
                     :model-value="(character.proficiencies[statistic]?.[skill] || 0) > 1"
-                    @update:model-value="(event: boolean) => addDoubleProficiency(event, statistic, skill)"
+                    @update:model-value="(event: boolean) => addDoubleProficiency(event, statistic, skill as keyof Skills)"
                   />
                 </Transition>
               </template>
@@ -198,7 +195,7 @@
               <template #calculated>
                 <NumberInput
                   :name="`${statistic}${capitalize(skill)}Modifier`"
-                  :model-value="calculatedSkill(statistic, skill)"
+                  :model-value="calculatedSkill(statistic, skill as keyof Skills)"
                   :readonly="true"
                 />
               </template>
@@ -222,9 +219,7 @@
           v-for="(value, armourType) in character.armourProficiencies"
           :key="armourType"
           :name="armourType"
-          :label="
-            capitalize(armourType) + (armourType !== 'shields' ? ' Armour' : '')
-          "
+          :label="capitalize(armourType) + (armourType !== 'shields' ? ' Armour' : '')"
           v-model="character.armourProficiencies[armourType]"
         />
       </li>
@@ -286,9 +281,7 @@
                       :name="`maxSpellSlotsLevel${level}`"
                       :min="1"
                       :modelValue="character.spellSlots[level]"
-                      @update:model-value="
-                        (slot) => updateSpellSlots(level, slot)
-                      "
+                      @update:model-value="(slot: number) => updateSpellSlots(level, slot)"
                     />
                   </InputField>
                 </template>
@@ -305,7 +298,7 @@
           name="armour"
           size="normal"
           :model-value="character.armour"
-          @update:model-value="(armour) => fetchArmour(armour)"
+          @update:model-value="(armour: string | null) => fetchArmour(armour)"
         />
       </li>
     </ol>
@@ -316,7 +309,7 @@
 import { useCharacterStore } from "@/stores/character";
 import { useEnvironmentStore } from "@/stores/environment";
 import { Armour } from "~/types/armour";
-import { Statistics } from "~/types/character";
+import { AbilitySkills, Skills } from "~/types/character";
 import { DistanceUnit } from "~/types/unit";
 import { ordinalSuffix } from "~/utilities/number";
 import { capitalize } from "~/utilities/string";
@@ -350,21 +343,26 @@ const {
 
 function addProficiency(
   add: boolean,
-  statistic: keyof Statistics,
-  skill: string
+  statistic: keyof AbilitySkills,
+  skill: keyof Skills
 ) {
   toggleProficiency(statistic, skill, add ? 1 : 0);
 }
 
 function addDoubleProficiency(
   add: boolean,
-  statistic: keyof Statistics,
-  skill: string
+  statistic: keyof AbilitySkills,
+  skill: keyof Skills
 ) {
   toggleProficiency(statistic, skill, add ? 2 : 1);
 }
 
-async function fetchArmour(armour: string) {
+async function fetchArmour(armour: string | null) {
+  if (!armour) {
+    applyArmour(null);
+    return;
+  }
+
   try {
     let chooseArmour: Armour = await $fetch(`/api/armour/${armour}`);
 

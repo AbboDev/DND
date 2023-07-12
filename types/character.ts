@@ -20,7 +20,56 @@ export type SpellSlotsPerLevel = {
 };
 
 export type Skills = {
-  [P in keyof Statistics]?: Record<string, number>;
+  athletics: number | boolean;
+  acrobatics: number | boolean;
+  sleightOfHand: number | boolean;
+  stealth: number | boolean;
+  investigation: number | boolean;
+  nature: number | boolean;
+  religion: number | boolean;
+  arcana: number | boolean;
+  history: number | boolean;
+  animalHandling: number | boolean;
+  medicine: number | boolean;
+  insight: number | boolean;
+  survival: number | boolean;
+  perception: number | boolean;
+  deception: number | boolean;
+  intimidation: number | boolean;
+  performance: number | boolean;
+  persuasion: number | boolean;
+};
+
+export type BasicSkills = {
+  savingThrows: number;
+};
+
+export type StrengthSkills = BasicSkills & Pick<Skills, "athletics">;
+
+export type DexteritySkills = BasicSkills &
+  Pick<Skills, "acrobatics" | "sleightOfHand" | "stealth">;
+
+export type ConstitutionSkills = BasicSkills;
+
+export type IntelligenceSkills = BasicSkills &
+  Pick<Skills, "investigation" | "nature" | "religion" | "arcana" | "history">;
+
+export type WisdomSkills = BasicSkills &
+  Pick<
+    Skills,
+    "animalHandling" | "medicine" | "insight" | "survival" | "perception"
+  >;
+
+export type CharismaSkills = BasicSkills &
+  Pick<Skills, "deception" | "intimidation" | "performance" | "persuasion">;
+
+export type AbilitySkills = {
+  strength: StrengthSkills;
+  dexterity: DexteritySkills;
+  constitution: ConstitutionSkills;
+  intelligence: IntelligenceSkills;
+  wisdom: WisdomSkills;
+  charisma: CharismaSkills;
 };
 
 export type ArmourProficiencies = {

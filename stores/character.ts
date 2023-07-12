@@ -6,7 +6,7 @@ import {
 
 import {
   Statistics,
-  Skills,
+  AbilitySkills,
   SpellSlotsPerLevel,
   CoreBackgrounds,
   CoreClasses,
@@ -29,7 +29,7 @@ export interface CharacterStore {
   hitDie: RemovableRef<Dice>;
   statistics: RemovableRef<Statistics>;
   proficiency: RemovableRef<number>;
-  proficiencies: RemovableRef<Skills>;
+  proficiencies: RemovableRef<AbilitySkills>;
   languages: RemovableRef<CoreLanguages>;
   armourProficiencies: RemovableRef<ArmourProficiencies>;
   weaponProficiencies: RemovableRef<WeaponProficiencies>;
@@ -217,7 +217,7 @@ export const useCharacterStore = defineStore(
 
     const proficiency = useLocalStorage<number>("proficiencyBonus", 2);
 
-    const proficiencies = useLocalStorage<Skills>("proficiencies", {
+    const proficiencies = useLocalStorage<AbilitySkills>("proficiencies", {
       strength: {
         savingThrows: 0,
         athletics: 0,

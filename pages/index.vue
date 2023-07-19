@@ -171,12 +171,13 @@
         <StatisticField
           :name="statistic"
           :label="capitalize(statistic)"
-          v-model="character.statistics[statistic]"
+          :model-value="getStatistic(statistic)"
+          @update:model-value="(value: number) => setStatistic(statistic, value)"
         >
           <template #calculated>
             <NumberInput
               :name="`${statistic}Modifier`"
-              :model-value="calculatedModifier(statistic)"
+              :model-value="getModifier(statistic)"
               :readonly="true"
             />
           </template>
@@ -205,7 +206,7 @@
               <template #calculated>
                 <NumberInput
                   :name="`${statistic}${capitalize(skill)}Modifier`"
-                  :model-value="calculatedSkill(statistic, skill as keyof Skills)"
+                  :model-value="getSkill(statistic, skill as keyof Skills)"
                   :readonly="true"
                 />
               </template>
@@ -320,6 +321,7 @@ import { useCharacterStore } from "@/stores/character";
 import { useEnvironmentStore } from "@/stores/environment";
 import { Armour } from "~/types/armour";
 import { AbilitySkills, Skills } from "~/types/character";
+import { Race } from "~/types/race";
 import { DistanceUnit } from "~/types/unit";
 import { ordinalSuffix } from "~/utilities/number";
 import { capitalize } from "~/utilities/string";
@@ -330,8 +332,9 @@ const {
   character,
 
   speed,
-  calculatedModifier,
-  calculatedSkill,
+  getStatistic,
+  getModifier,
+  getSkill,
 
   armourClass,
   initiative,
@@ -344,6 +347,7 @@ const {
 } = storeToRefs(characterStore);
 
 const {
+  setStatistic,
   toggleProficiency,
   updateSpellSlots,
   updateMaxHitPoints,

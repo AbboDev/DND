@@ -22,10 +22,10 @@ export interface CharacterStore {
 
   speed: globalThis.ComputedRef<number>;
 
-  calculatedModifier: globalThis.ComputedRef<
-    (statistic: keyof Statistics) => number
-  >;
-  calculatedSkill: globalThis.ComputedRef<
+  setStatistic(statistic: keyof Statistics, value: number): void;
+  getStatistic: globalThis.ComputedRef<(statistic: keyof Statistics) => number>;
+  getModifier: globalThis.ComputedRef<(statistic: keyof Statistics) => number>;
+  getSkill: globalThis.ComputedRef<
     (statistic: keyof AbilitySkills, skill: keyof Skills) => number
   >;
 
@@ -125,6 +125,14 @@ export const useCharacterStore = defineStore<typeof STORE_NAME, CharacterStore>(
           wisdom: 10,
           charisma: 10,
         },
+        statisticsVariations: {
+          strength: [],
+          dexterity: [],
+          constitution: [],
+          intelligence: [],
+          wisdom: [],
+          charisma: [],
+        },
         proficiencies: {
           strength: {
             savingThrows: 0,
@@ -200,27 +208,54 @@ export const useCharacterStore = defineStore<typeof STORE_NAME, CharacterStore>(
       for (const [statistic, value] of Object.entries(
         character.value.armour.require
       )) {
-        if (character.value.statistics[statistic as keyof Statistics]) {
-          if (
-            character.value.statistics[statistic as keyof Statistics] < value
-          ) {
-            speed -= 2;
-            break;
-          }
+        let requiredStatistic = getStatistic.value(
+          statistic as keyof Statistics
+        );
+
+        if (requiredStatistic && requiredStatistic < value) {
+          speed -= 2;
+          break;
         }
       }
 
       return speed;
     });
 
-    const calculatedModifier = computed(
+    const setStatistic = (statistic: keyof Statistics, value: number): void => {
+      character.value.statistics[statistic] = value;
+    };
+
+    const getStatistic = computed(() => (statistic: keyof Statistics) => {
+      let value = character.value.statistics[statistic] || 0;
+
+      const variations = character.value.statisticsVariations[statistic] || [];
+      if (variations.length > 0) {
+        for (const variation in variations) {
+          if (Object.prototype.hasOwnProperty.call(variations, variation)) {
+            value += variations[variation];
+          }
+        }
+      }
+
+      if (character.value.race) {
+        let raceAbility = character.value.race.ability[statistic];
+        if (raceAbility) {
+          value += raceAbility;
+        } else {
+        }
+      }
+
+      return value;
+    });
+
+    const getModifier = computed(
       () => (statistic: keyof Statistics) =>
-        Math.floor(((character.value.statistics[statistic] || 0) - 10) / 2)
+        Math.floor((getStatistic.value(statistic) - 10) / 2)
     );
 
-    const calculatedSkill = computed(
+    const getSkill = computed(
       () => (statistic: keyof AbilitySkills, skill: keyof Skills) => {
-        let proficiency = calculatedModifier.value(statistic);
+        let proficiency = getModifier.value(statistic);
 
         if (skill in character.value.proficiencies[statistic]) {
           proficiency +=
@@ -243,7 +278,7 @@ export const useCharacterStore = defineStore<typeof STORE_NAME, CharacterStore>(
         value += ac.base;
 
         if (ac.modifier) {
-          let modifier = calculatedModifier.value(ac.modifier);
+          let modifier = getModifier.value(ac.modifier);
 
           if (ac.maxModifier) {
             modifier = Math.min(modifier, ac.maxModifier);
@@ -253,28 +288,25 @@ export const useCharacterStore = defineStore<typeof STORE_NAME, CharacterStore>(
         }
       } else {
         value +=
-          character.value.baseArmourClass +
-          calculatedModifier.value("dexterity");
+          character.value.baseArmourClass + getModifier.value("dexterity");
       }
 
       return value;
     });
 
-    const initiative = computed<number>(() =>
-      calculatedModifier.value("dexterity")
-    );
+    const initiative = computed<number>(() => getModifier.value("dexterity"));
 
     const passivePerception = computed<number>(
-      () => 10 + calculatedSkill.value("wisdom", "perception")
+      () => 10 + getSkill.value("wisdom", "perception")
     );
 
     const passiveInsight = computed<number>(
-      () => 10 + calculatedSkill.value("wisdom", "insight")
+      () => 10 + getSkill.value("wisdom", "insight")
     );
 
     const spellAttackBonus = computed<number>(
       () =>
-        calculatedModifier.value(character.value.spellcastingAbility) +
+        getModifier.value(character.value.spellcastingAbility) +
         character.value.proficiency
     );
     const spellSaveDC = computed<number>(() => 8 + spellAttackBonus.value);
@@ -359,8 +391,10 @@ export const useCharacterStore = defineStore<typeof STORE_NAME, CharacterStore>(
       applyArmour,
       applyRace,
 
-      calculatedSkill,
-      calculatedModifier,
+      setStatistic,
+      getStatistic,
+      getSkill,
+      getModifier,
       initiative,
 
       speed,

@@ -15,6 +15,7 @@ export interface Character {
   hitDie: Dice;
 
   statistics: Statistics;
+  statisticsVariations: Record<keyof Statistics, number[]>;
   proficiency: number;
   proficiencies: AbilitySkills;
   languages: CoreLanguages;

@@ -4367,6 +4367,7 @@ export const races: Race[] = [
       common: true,
       goblin: true,
     },
+    ability: {},
 
     entries: [
       {
@@ -5238,6 +5239,7 @@ export const races: Race[] = [
       walk: 30,
       swim: 30,
     },
+    ability: {},
     darkvision: 120,
     traitTags: ["Amphibious", "NPC Race", "Sunlight Sensitivity"],
     languageProficiencies: {
@@ -5684,6 +5686,7 @@ export const races: Race[] = [
       walk: 10,
       swim: 40,
     },
+    ability: {},
     traitTags: ["Amphibious", "NPC Race"],
     languageProficiencies: {
       common: true,

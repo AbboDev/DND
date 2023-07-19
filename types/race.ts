@@ -10,7 +10,7 @@ export type Race = {
   darkvision?: number;
   age?: Age;
 
-  ability?: Choosable<Statistics>;
+  ability: Choosable<Statistics>;
   skillProficiencies?: {
     any?: number;
     choose?: Selectable<string>;

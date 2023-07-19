@@ -1,6 +1,7 @@
 import { Alignment } from "./alignments";
 import { Armour } from "./armour";
 import { Dice } from "./dice";
+import { Race } from "./race";
 
 export interface Character {
   name: string;
@@ -20,6 +21,7 @@ export interface Character {
   armourProficiencies: ArmourProficiencies;
   weaponProficiencies: WeaponProficiencies;
 
+  race: Race | null;
   class: CoreClasses;
   background: CoreBackgrounds;
   alignment: keyof typeof Alignment;

@@ -21,6 +21,16 @@
           <template #label> Background </template>
         </BackgroundField>
       </li>
+      <li>
+        <RaceField
+          name="race"
+          size="normal"
+          :model-value="character.race"
+          @update:model-value="(race: string | null) => fetchRace(race)"
+        >
+          <template #label> Race </template>
+        </RaceField>
+      </li>
     </ol>
 
     <ol>
@@ -339,6 +349,7 @@ const {
   updateMaxHitPoints,
   updateLevel,
   applyArmour,
+  applyRace,
 } = characterStore;
 
 function addProficiency(
@@ -367,6 +378,20 @@ async function fetchArmour(armour: string | null) {
     let chooseArmour: Armour = await $fetch(`/api/armour/${armour}`);
 
     applyArmour(chooseArmour);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function fetchRace(race: string | null) {
+  if (!race) {
+    applyRace(null);
+    return;
+  }
+
+  try {
+    let chooseRace: Race = await $fetch(`/api/races/${race}`);
+    applyRace(chooseRace);
   } catch (error) {
     console.error(error);
   }

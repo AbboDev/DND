@@ -1,5 +1,6 @@
 import { Race } from "~/types/race";
 import { races } from "~/data/races";
+import { slugify } from "~/utilities/slugify";
 
 export default defineEventHandler<Race>((event) => {
   const source = event.context.params?.source.toLowerCase();
@@ -14,7 +15,9 @@ export default defineEventHandler<Race>((event) => {
 
   const race = races.find((race) => {
     return (
-      race.source?.toLowerCase() === source && race.name?.toLowerCase() === name
+      race.source &&
+      slugify(race.source) === source &&
+      slugify(race.name) === name
     );
   });
 

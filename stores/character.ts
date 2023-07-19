@@ -15,6 +15,7 @@ import {
 } from "~/types/character";
 import { Dice } from "~/types/dice";
 import { Armour } from "~/types/armour";
+import { Race } from "~/types/race";
 
 export interface CharacterStore {
   character: RemovableRef<Character>;
@@ -45,6 +46,7 @@ export interface CharacterStore {
     add?: number
   ): void;
   applyArmour(armour: Armour | null): void;
+  applyRace(race: Race | null): void;
   updateSpellSlots(level: keyof SpellSlotsPerLevel, slot: number): void;
 }
 
@@ -82,6 +84,7 @@ export const useCharacterStore = defineStore<typeof STORE_NAME, CharacterStore>(
         background: CoreBackgrounds.ACOLYTE,
         alignment: "Neutral",
 
+        race: null,
         armour: null,
         baseArmourClass: 10,
         shieldArmourClass: 0,
@@ -328,6 +331,17 @@ export const useCharacterStore = defineStore<typeof STORE_NAME, CharacterStore>(
       character.value.armour = armour;
     };
 
+    const applyRace = (race: Race | null): void => {
+      if (!race) {
+        character.value.race = null;
+        return;
+      }
+
+      console.debug(race);
+
+      character.value.race = race;
+    };
+
     const updateSpellSlots = (
       level: keyof SpellSlotsPerLevel,
       slot: number
@@ -343,6 +357,7 @@ export const useCharacterStore = defineStore<typeof STORE_NAME, CharacterStore>(
       character: skipHydrate(character),
       armourClass,
       applyArmour,
+      applyRace,
 
       calculatedSkill,
       calculatedModifier,
